@@ -10,28 +10,28 @@ import { ReactComponent as WsServer } from '../icons/ws_server.svg'
 
 const Tabs = ({ tabsData, onTabClose, onCreateNewTab }) => {
   return (
-    <Box sx={{width: "100%", minHeight: "25px", maxHeight: "50px", height: "1.5vw", display: "flex", boxShadow:" 0px 4px 5.2px 1px rgba(209,197,180, 0.25)" }}>
-      <Box sx={{ display: "flex", height: "100%" }}>
+    <Box sx={{width: "100%", minHeight: "25px", maxHeight: "50px", height: "2vh", display: "flex", boxShadow:" 0px 4px 5.2px 1px rgba(209,197,180, 0.25)"}}>
+      <Box sx={{ display: "flex", height: "100%", maxWidth:"95%", overflow:"scroll", scrollbarWidth:"none"  }}>
         {
           tabsData && tabsData.map((tab) => {
             return (
-              <Box id={tab.id} sx={{height: "100%", display:"flex", cursor:"pointer"
+              <Box id={tab.id} key={tab.id} sx={{height: "100%", display:"flex", cursor:"pointer"
             }}>
-              <Box sx={{width: "11vw", minWidth: "150px", maxWidth: "350px", height: "100%", display:"flex", cursor:"pointer",
+              <Box sx={{width: "10vw", minWidth: "150px", maxWidth: "350px", height: "100%", display:"flex", cursor:"pointer",
               }}>
                 <Box sx={{height: "100%", width:"15%", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   {tab.icon==="ws_connection"? <WsConnection/> : <WsServer/>}
                 </Box>
                 <Tooltip title={tab.text} placement="bottom">
                 <Box sx={{height: "100%", width:"75%",display:"flex", alignItems:"center", justifyContent:"flex-start"}}>
-                  <Box sx={{height: "100%", width:"100%", whiteSpace:"nowrap", textOverflow:"ellipsis", overflow:"hidden", display:"block", color:"text.disabled" }}>{tab.text}</Box>
+                  <Box sx={{ width:"100%", whiteSpace:"nowrap", textOverflow:"ellipsis", overflow:"hidden", display:"block", color:"text.disabled"}}>{tab.text}</Box>
                 </Box>
                 </Tooltip>
-                <Box sx={{height: "100%", width:"5%", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <OnlyIconButton Icon={CloseIcon} color={'fail.light'} onHoverColor={'fail.main'} width='60%'/>
+                <Box sx={{height: "100%", width:"10%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                  <OnlyIconButton Icon={CloseIcon} color={'fail.light'} data={tab} onHoverColor={'fail.main'} width='60%'onClick={onTabClose}/>
                 </Box>
               </Box>
-              <Box sx={{width:"1px", display:"flex", flexDirection:"column", height:"100%"}}>
+              <Box sx={{width:"1px", display:"flex", flexDirection:"column", height:"100%", marginLeft:"2px"}}>
               <Box sx={{width:"100%", height:"15%"}}></Box>
               <Box sx={{width:"100%", bgcolor:"text.backgroundMatch", height:"70%"}}></Box>
               <Box sx={{width:"100%", height:"15%"}}></Box>
@@ -42,9 +42,8 @@ const Tabs = ({ tabsData, onTabClose, onCreateNewTab }) => {
           })
         }
       </Box>
-      <Box sx={{flex: "1", height: "100%", display:"flex", alignItems:"center", paddingLeft:"10px" }}>
-      <OnlyIconButton Icon={AddIcon} color={'text.backgroundMatch'} onHoverColor={'primary.main'} width='70%'/>
-
+      <Box sx={{flex: "1", height: "100%", display:"flex", alignItems:"center", paddingLeft:"10px"}}>
+      <OnlyIconButton Icon={AddIcon} color={'text.backgroundMatch'} onClick={onCreateNewTab} onHoverColor={'primary.main'} width='70%'/>
       </Box>
 
     </Box>
@@ -52,6 +51,3 @@ const Tabs = ({ tabsData, onTabClose, onCreateNewTab }) => {
 }
 
 export default Tabs
-
-// x y blur spread colour
-//box-shadow: 32px 7px 99px 1px #EEEEF8;

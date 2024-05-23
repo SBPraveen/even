@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import Layout from './layout'
 import { Box } from '@mui/material';
 import Tabs from '../components/Tabs'
+import WebSocketInitPage from '../subPages/WebSocketServerInitPage';
+import WebSocketServerStarted from '../subPages/WebSocketServerStarted';
 
 
 const CreateWebsocketServer = () => {
@@ -9,19 +11,20 @@ const CreateWebsocketServer = () => {
 
   const onCreateNewTab = () => {
     const tempTabsData = JSON.parse(JSON.stringify(tabsData))
-    const newTabData = {text:"", icon:"ws_connection", id:Date.now()}
+    const newTabData = {text:"ws://localhost:8089", icon:"ws_connection", id:Date.now()}
     setTabsData([...tempTabsData, newTabData])
   }  
-  const onTabClose = () => {
-
+  const onTabClose = (closedTab) => {
+    const tempTabsData = tabsData.filter((tab) => tab.id !== closedTab.id)
+    setTabsData(tempTabsData)
   }
 
   return (
     <Layout>
-      <Box sx={{bgcolor:'primary.light', height: "100vh", display:"flex", alignItems:"center", justifyContent:"flex-start", flexDirection:"column"}}>
+      <Box sx={{bgcolor:'primary.light', height: "100vh", display:"flex", alignItems:"center", justifyContent:"flex-start", flexDirection:"column", width:"97vw"}}>
         <Tabs tabsData={tabsData} onCreateNewTab={onCreateNewTab} onTabClose={onTabClose} />
-          <Box sx={{flex:1, width:"100%"}}>
-            Praveen
+          <Box sx={{background:"pink", height: "98vh", width:"97vw", display:"flex", alignItems:"center", justifyContent:"center"}}>
+            <WebSocketInitPage/>
           </Box>
       </Box>
     </Layout>
