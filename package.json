@@ -1,0 +1,15 @@
+{
+  "name": "even",
+  "version": "1.0.0",
+  "description": "An app that eases the development and testing of event driven architecture",
+  "main": "main.js",
+  "author": "yesBee",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "start:watch": "npx electronmon --trace-warnings ."
+  },
+  "devDependencies": {
+    "electron": "^30.0.3"
+  }
+}
