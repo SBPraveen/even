@@ -21,9 +21,9 @@ const CreateWebsocketServer = () => {
 
   return (
     <Layout>
-      <Box sx={{bgcolor:'primary.light', height: "100vh", display:"flex", alignItems:"center", justifyContent:"flex-start", flexDirection:"column", width:"97vw"}}>
+      <Box sx={{bgcolor:'primary.light', height: "100%", display:"flex", alignItems:"center", justifyContent:"flex-start", flexDirection:"column", width:"100%"}}>
         <Tabs tabsData={tabsData} onCreateNewTab={onCreateNewTab} onTabClose={onTabClose} />
-          <Box sx={{background:"pink", height: "98vh", width:"97vw", display:"flex", alignItems:"center", justifyContent:"center"}}>
+          <Box sx={{ flex:1, width:"100%", display:"flex", alignItems:"center", justifyContent:"center"}}>
             <WebSocketInitPage/>
           </Box>
       </Box>

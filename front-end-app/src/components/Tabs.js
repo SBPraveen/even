@@ -10,7 +10,7 @@ import { ReactComponent as WsServer } from '../icons/ws_server.svg'
 
 const Tabs = ({ tabsData, onTabClose, onCreateNewTab }) => {
   return (
-    <Box sx={{width: "100%", minHeight: "25px", maxHeight: "50px", height: "2vh", display: "flex", boxShadow:" 0px 4px 5.2px 1px rgba(209,197,180, 0.25)"}}>
+    <Box sx={{width: "100%", minHeight: "25px", maxHeight: "50px", height: "2%", display: "flex", boxShadow:3}}>
       <Box sx={{ display: "flex", height: "100%", maxWidth:"95%", overflow:"scroll", scrollbarWidth:"none"  }}>
         {
           tabsData && tabsData.map((tab) => {

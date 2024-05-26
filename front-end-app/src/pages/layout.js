@@ -15,7 +15,9 @@ const Layout = ({ children }) => {
                 <Stack direction="column"
                     justifyContent="center"
                     alignItems="center"
-                    spacing={5}>
+                    spacing={5}
+                    sx={{cursor:"pointer"}}
+                    >
                         <Tooltip title={"Web Socket Server"} placement="right">
                         <WebsocketServer width={"50%"} height={"50%"}/>
                         </Tooltip>
@@ -32,7 +34,7 @@ const Layout = ({ children }) => {
                 </Stack>
                 <Avatar sx={{ bgcolor: 'primary.main', position:'absolute', bottom:'0', marginBottom: '1vh', width: "50" }}>P</Avatar>
             </Box>
-            <Box sx={{ height: '100vh', flex:1}}>
+            <Box sx={{ height: '100vh', flex:1, background:"red"}}>
                 {children}
             </Box>
 
