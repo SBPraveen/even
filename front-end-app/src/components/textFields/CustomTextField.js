@@ -4,9 +4,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 
-const CustomTextField = ({ size, placeholder, isEndAdornment, tooltip }) => {
+const CustomTextField = ({ size, placeholder, isEndAdornment, tooltip, register, fieldName }) => {
+  const registerForm = register ? {...register(fieldName)} : {}
   return (
       <InputBase
+      {...registerForm}
         size={size}
         placeholder={placeholder}
         endAdornment={ isEndAdornment &&

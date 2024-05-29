@@ -3,7 +3,11 @@ import { Button } from '@mui/material'
 
 const OutlinedButton = ({buttonName, onClick, color, width}) => {
   return (
-    <Button variant="outlined" sx={{borderColor:color, color, ...(width && {width})}}>{buttonName}</Button>
+    <Button disableRipple={true} onClick={onClick} variant="outlined" sx={{borderColor:color, color, ...(width && {width}), '&:hover': {
+      backgroundColor: 'inherit',
+      boxShadow: 'none', 
+      borderColor:"inherit"
+    },}}>{buttonName}</Button>
   )
 }
 

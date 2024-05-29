@@ -6,14 +6,14 @@ import BoxCardChild from './BoxCardChild';
 
 
 
-const BoxCard = ({buttonName, cardData, infoToolTipMessage, cardDataId, onCloseCard, onClickButton}) => {
+const BoxCard = ({buttonName, cardData, infoToolTipMessage, cardDataId, onCloseCard, onClickButton, onCardClick, cardLabel}) => {
   
   return (
     <Box sx={{ width: "100%", bgcolor: "primary.white", borderRadius: "8px", height: "5vh", minHeight: "30px", maxHeight: "50px", display: "flex" }}>
       <Box sx={{ display: "flex", height: "100%", flex:1, overflow: "scroll", scrollbarWidth: "none", alignItems:"center", justifyContent:"flex-start", paddingLeft:'1rem' }}>
         {cardData.map((card) => {
           return(
-            <BoxCardChild data={card} cardDataId={cardDataId} onClose={onCloseCard} key={card[cardDataId]}/>
+            <BoxCardChild data={card} cardDataId={cardDataId} onClose={onCloseCard} key={card[cardDataId]} onCardClick={onCardClick}/>
           )
         })}
       </Box>

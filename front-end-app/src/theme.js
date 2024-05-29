@@ -47,6 +47,7 @@ export const theme = createTheme({
           paddingLeft: "1rem",
           paddingRight: "1rem",
           boxShadow: theme.shadows[2],
+          background:theme.palette.primary.white,
           borderRadius: "8px",
           height: "5vh",
           minHeight: "30px",

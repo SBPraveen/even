@@ -1,9 +1,11 @@
 import React from 'react'
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 
-const IconButton = ({Icon, buttonName, buttonBackground, iconColor, width}) => {
+
+const IconButton = ({Icon, buttonName, buttonBackground, iconColor, width, handleSubmit, onSubmit, isLoading}) => {
   return (
-    <Button variant="contained" startIcon={<Icon/>} sx={{
+    <Button  onClick={handleSubmit && handleSubmit(onSubmit)} variant="contained" startIcon={!isLoading && <Icon/>} sx={{
       ...(width && {width}),
         bgcolor:buttonBackground,
         '&:hover': {
@@ -14,7 +16,7 @@ const IconButton = ({Icon, buttonName, buttonBackground, iconColor, width}) => {
             color: iconColor,
           },
         }}>
-        {buttonName}
+        {isLoading ? <CircularProgress size={20} sx={{ color: iconColor }}/> : buttonName}
     </Button>
   )
 }
