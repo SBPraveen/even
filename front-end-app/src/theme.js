@@ -22,7 +22,6 @@ export const theme = createTheme({
       disabled: "#AFAFAF",
       light: "#FFFFFF",
       backgroundMatch: "#A1927D",
-      backgroundMatchDark: "#897A65"
     },
     success: {
       main: "#1F9B00",
@@ -37,7 +36,7 @@ export const theme = createTheme({
     fontFamily: 'Nunito, Arial, sans-serif',
     button: {
       textTransform: 'capitalize'
-    }
+    },
   },
   components: {
     MuiInputBase: {
@@ -100,6 +99,15 @@ export const theme = createTheme({
           marginRight: '1vw', // Adjust the margin as needed
         }
       },
+    },
+    MuiTypography:{
+      styleOverrides: {
+        root: ({ theme }) => ({
+          cursor:"default",
+          color:theme.palette.text.main,
+        }),
+      },
+
     }
   }
 })

@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import SaveIcon from '@mui/icons-material/Save';
 
 
-const WebSocketInitPage = () => {
+const WebSocketInitPage = ({setIsServerStarted}) => {
 
   const { register: registerWssStart, handleSubmit: handleSubmitWssStart } = useForm();
   const { register: registerWssConnect, handleSubmit: handleSubmitWssConnect } = useForm();
@@ -32,10 +32,12 @@ const WebSocketInitPage = () => {
   const onSubmitWssStart = data => {
     console.log(data);
     setIsWssStartLoading(true)
+    setIsServerStarted(true)
   };
   const onSubmitWssConnect = data => {
     console.log(data, cookies);
     setIsWssConnectLoading(true)
+    setIsServerStarted(true)
   };
   const onSubmitAddCookie = data => {
     setCookies([...cookies, {...data, cookieId:uuidv4()}])

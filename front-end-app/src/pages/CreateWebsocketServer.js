@@ -8,6 +8,7 @@ import WebSocketServerStarted from '../subPages/WebSocketServerStarted';
 
 const CreateWebsocketServer = () => {
   const [tabsData, setTabsData] = useState([{text:"ws://localhost:8080", icon:"ws_connection", id:1234}, {text:"ws://localhost:9090", icon:"ws_server", id:456}, {text:"ws://localhost:7070", icon:"ws_connection", id:789}])
+  const [isServerStarted, setIsServerStarted] = useState(false)
 
   const onCreateNewTab = () => {
     const tempTabsData = JSON.parse(JSON.stringify(tabsData))
@@ -23,9 +24,17 @@ const CreateWebsocketServer = () => {
     <Layout>
       <Box sx={{bgcolor:'primary.light', height: "100%", display:"flex", alignItems:"center", justifyContent:"flex-start", flexDirection:"column", width:"100%"}}>
         <Tabs tabsData={tabsData} onCreateNewTab={onCreateNewTab} onTabClose={onTabClose} />
-          <Box sx={{ flex:1, width:"100%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-            <WebSocketInitPage/>
+          {
+            isServerStarted ?
+            <Box sx={{ flex:1, width:"100%", display:"flex", alignItems:"center", justifyContent:"center", background:"yellow"}}>
+              <WebSocketServerStarted/>
+            </Box>
+            :
+            <Box sx={{ flex:1, width:"100%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+            <WebSocketInitPage setIsServerStarted={setIsServerStarted}/>
           </Box>
+          }
+
       </Box>
     </Layout>
   )
