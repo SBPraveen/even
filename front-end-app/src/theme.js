@@ -10,9 +10,13 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: "#FF9B05",
-      light: "#FFF9F1",
+      iconLight:"#FFC062",
+      light: "#FFF4E5",
+      chat:"#FEF9F1",
       tabs: "#FFFBF5",
-      white:"#FFFFFF"
+      white:"#FFFFFF",
+      
+
     },
     secondary: {
       main: "#232F3D"
@@ -25,11 +29,22 @@ export const theme = createTheme({
     },
     success: {
       main: "#1F9B00",
-      light: "#7CC36A"
+      light: "#7CC36A",
+      chatBg:"#F4FFF2"
     },
     fail: {
       main: "#EE3124",
-      light: "#EC867F"
+      light: "#EC867F",
+      chatBg:"#FFF7FB"
+    },
+    produce:{
+      main: "#00FF0A"
+    },
+    consume:{
+      main:"#FF005C"
+    },
+    selected:{
+      main:"#EAF7FF"
     }
   },
   typography: {

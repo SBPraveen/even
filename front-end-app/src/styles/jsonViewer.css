@@ -1,0 +1,29 @@
+/* App.css */
+.custom-scrollbar .react-json-view {
+    /* Apply custom scrollbar styles */
+    scrollbar-color: #FFC062;
+  }
+  
+  /* For WebKit browsers */
+  .custom-scrollbar .react-json-view::-webkit-scrollbar {
+    width: 7.5px;
+    height: 7.5px;
+  }
+  
+  .custom-scrollbar .react-json-view::-webkit-scrollbar-track:vertical {
+    background: transparent;
+    margin: 3vh 0;
+  }
+  .custom-scrollbar .react-json-view::-webkit-scrollbar-track:horizontal {
+    background: transparent;
+    margin: 0 3vh;
+  }
+  
+  .custom-scrollbar .react-json-view::-webkit-scrollbar-thumb {
+    background: #FFC062;
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar .react-json-view::-webkit-scrollbar-thumb:hover {
+    background: #FF9B05;
+  }

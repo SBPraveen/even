@@ -1,9 +1,9 @@
 import React from 'react'
-import {  Button } from '@mui/material'
+import { Typography } from '@mui/material'
 
 const TextButton = ({color, text, onHoverColor, onClick}) => {
   return (
-    <Button onClick={onClick} variant="body2" sx={{
+    <Typography onClick={onClick} variant="body2" sx={{
         color,
         padding:0,
         cursor:"pointer",
@@ -13,7 +13,7 @@ const TextButton = ({color, text, onHoverColor, onClick}) => {
             color: onHoverColor,
           },
     }}>{text}
-    </Button>
+    </Typography>
 
   )
 }

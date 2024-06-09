@@ -3,9 +3,10 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
-const IconButton = ({Icon, buttonName, buttonBackground, iconColor, width, handleSubmit, onSubmit, isLoading}) => {
+const IconButton = ({Icon, buttonName, buttonBackground, iconColor, width, handleSubmit, onSubmit, isLoading, sx}) => {
   return (
     <Button  onClick={handleSubmit && onSubmit ? handleSubmit(onSubmit) : handleSubmit} variant="contained" startIcon={!isLoading && <Icon/>} sx={{
+      ...(sx&&{...sx}),
       ...(width && {width}),
         bgcolor:buttonBackground,
         '&:hover': {
