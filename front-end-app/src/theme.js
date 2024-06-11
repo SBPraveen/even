@@ -35,7 +35,7 @@ export const theme = createTheme({
     fail: {
       main: "#EE3124",
       light: "#EC867F",
-      chatBg:"#FFF7FB"
+      chatBg:"#FFF2F8"
     },
     produce:{
       main: "#00FF0A"

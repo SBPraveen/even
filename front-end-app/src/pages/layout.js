@@ -8,7 +8,7 @@ import { ReactComponent as WebsocketTestEngine } from '../icons/websocket_test_e
 const Layout = ({ children }) => {
     return (
         <Box sx={{ display: 'flex' }}>
-            <Box sx={{ height: '100vh', width: '3vw', maxWidth:"80px", minWidth:"45px",bgcolor: 'secondary.main', display:'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection:'column', position:'relative'  }}>
+            <Box sx={{ height: '100vh', width: '57.5px', bgcolor: 'secondary.main', display:'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection:'column', position:'relative'  }}>
                 <Box sx={{marginTop:'1vh', marginBottom: '4vh', width:'100%', display:'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <Even  width={"80%"} />
                 </Box>
@@ -34,7 +34,7 @@ const Layout = ({ children }) => {
                 </Stack>
                 <Avatar sx={{ bgcolor: 'primary.main', position:'absolute', bottom:'0', marginBottom: '1vh', width: "50" }}>P</Avatar>
             </Box>
-            <Box sx={{ height: '100vh', flex:1, background:"red"}}>
+            <Box sx={{ height: '100vh', width: 'calc(100vw - 57.5px)', background:"red"}}>
                 {children}
             </Box>
 
