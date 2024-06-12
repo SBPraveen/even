@@ -15,7 +15,7 @@ import BoxCardChild from './BoxCardChild';
 import { useTheme } from '@mui/material/styles';
 
 
-const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessageClick }) => {
+const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessageClick, sendMessage }) => {
     const theme = useTheme();
     const [copyMessageClickedData, setCopyMessageClickedData] = useState(false)
     const [isMssgJsonEditor, setIsMssgJsonEditor] = useState(false)
@@ -28,8 +28,29 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
     const handleMssgJsonEditor = () => {
         setIsMssgJsonEditor(true)
     }
+    const fixJsonString = (str) => {
+        // Add quotes around keys
+        const fixedStr = str.replace(/([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g, '$1"$2"$3');
+        return fixedStr;
+    };
+    
+    // Helper function to parse JSON safely
+    const parseJsonSafely = (str) => {
+        let parsed;
+        const fixedStr = fixJsonString(str);
+        try {
+            parsed = JSON.parse(fixedStr);
+        } catch {
+            return { isValid: false, data: str };
+        }
+        return { isValid: true, data: parsed };
+    };
+    
     const handleSendMessage = () => {
-        const message = ""
+        const msgData = [...data]
+        const message = parseJsonSafely(mssgData)
+        msgData.push(message.data)
+        sendMessage(msgData)
         setIsMssgJsonEditor(false)
         setMssgData('')
     }
@@ -69,7 +90,7 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
                             <Box key={chat.id} sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: chat.isSent && !isHalfWidth ? "flex-end" : isHalfWidth ? "center" : "flex-start", paddingBottom: chat.id === data[data.length - 1].id ? "1.5vh" : "0vh" }}>
                                 <Box sx={{ width: isHalfWidth ? "95%" : "70%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 0.5vw", height: "6vh", minHeight: "30px", maxHeight: "75px", borderRadius: "8px", bgcolor: chat.isSent ? "success.chatBg" : "fail.chatBg" }}>
 
-                                    <Typography onClick={() => onMessageClick(chat)} sx={{ width: isHalfWidth ? "80%" : "88%", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "block", color: "text.main", cursor: "pointer" }}>{chat.message}</Typography>
+                                    <Typography onClick={() => onMessageClick(chat)} sx={{ width: isHalfWidth ? "80%" : "88%", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "block", color: "text.main", cursor: "pointer" }}>{typeof chat === 'object'? JSON.stringify(chat): chat}</Typography>
 
                                     <Box sx={{ width: isHalfWidth ? { xs: '40%', sm: '35%', md: '22%', lg: '17%', xl: '15%' } : { xs: '20%', sm: '20%', md: '20%', lg: '15%', xl: '11%' }, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                         <Typography sx={{ fontSize: { xs: '0.4rem', sm: '0.5rem', md: '0.6rem', lg: '0.7rem', xl: '0.8rem', }, color: "text.disabled", margin: 0, paddingTop: "3px" }}>{chat.time}</Typography>
@@ -111,7 +132,7 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
                     </Box>
                     <Box sx={{ height: "66%", width: "100%", display: "flex",}}>
                         <Box sx={{ height: "100%", display: "flex", flex: 1, alignItems: "center", justifyContent: "flex-start", paddingLeft: "1%", }}>
-                            <textarea style={{ height: "99%", width: "100%", outline: "none", border: "none", paddingTop: "0.5%", paddingBottom: "0.5%", overflow: "hidden", resize: "none" }} rows="4" cols="50">
+                            <textarea value={mssgData} onChange={(e)=>setMssgData(e.target.value)} style={{ height: "99%", width: "100%", outline: "none", border: "none", paddingTop: "0.5%", paddingBottom: "0.5%", overflow: "hidden", resize: "none" }} rows="4" cols="50">
 
                             </textarea>
                         </Box>
