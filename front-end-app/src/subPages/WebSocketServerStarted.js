@@ -15,11 +15,21 @@ const WebSocketServerStarted = () => {
   const [isServerStopLoading, setIsServerStopLoading] = useState(false)
   const [jsonViewerData, setJsonViewerData] = useState({})
   const [isLatencyInspect, setIsLatencyInspect] = useState(false)
-  const [messages, setMessages] = useState([])
-  const [SnackbarOpen, setSnackbarOpen] = useState(false)
-  const [SnackbarMessage, setSnackbarMessage] = useState('')
-  const [snackbarSeverity, setSnackbarSeverity] = useState('')
-  const [selectedMessage, setSelectedMessage] = useState('')
+  const [chatData, setChatData] = useState([])
+  const [Snackbar, setSnackbar] = useState({
+    isOpen: false,
+    message:'',
+    severity:''
+  })
+  const [selectedMessages, setSelectedMessages] = useState('')
+  
+  const setSnackbarOpen = (isOpen) =>{
+    setSnackbar({
+      isOpen,
+      message:Snackbar.message,
+      severity:Snackbar.severity
+    })
+  }
   const handleStopWssServer = () => {
     setIsServerStopLoading(true)
   }
@@ -27,12 +37,14 @@ const WebSocketServerStarted = () => {
     setIsLatencyInspect(!isLatencyInspect)
   }
   const onMessageClick = (message) => {
-    if (typeof message === 'object'){
-      setJsonViewerData(message)
+    if (typeof message.msg === 'object'){
+      setJsonViewerData(message.msg)
     }else {
-      setSnackbarSeverity('warning')
-      setSnackbarMessage('The message cannot be opened in JSON Viewer')
-      setSnackbarOpen(true)
+      setSnackbar({
+        isOpen:true,
+        message:'The message cannot be opened in JSON Viewer',
+        severity:'warning'
+      })
     }
   }
 
@@ -61,7 +73,7 @@ const WebSocketServerStarted = () => {
           <Box sx={{ width: (jsonViewerData ? "60%" : "100%"), height: "98%", display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
 
             <Box sx={{ width: "100%", height: "100%", bgcolor: 'primary.white', borderRadius: "21px" }}>
-              <Chat data={messages} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} sendMessage={setMessages} />
+              <Chat data={chatData} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} setChatData={setChatData} />
 
             </Box>
           </Box>
@@ -78,7 +90,7 @@ const WebSocketServerStarted = () => {
           }
 
         </Box>
-        <SnackBarAlert text={SnackbarMessage} isOpen={SnackbarOpen} setIsOpen={setSnackbarOpen} severity={snackbarSeverity}/>
+        <SnackBarAlert text={Snackbar.message} isOpen={Snackbar.isOpen} setIsOpen={setSnackbarOpen} severity={Snackbar.severity}/>
       </Box>
   )
 }
