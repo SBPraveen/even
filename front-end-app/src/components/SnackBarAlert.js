@@ -3,7 +3,7 @@ import Slide from '@mui/material/Slide';
 import { Snackbar, Alert } from '@mui/material'
 
 
-const SnackBarAlert = ({text, isOpen, setIsOpen, severity}) => {
+const SnackBarAlert = ({ text, isOpen, setIsOpen, severity, persist = false }) => {
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -11,7 +11,7 @@ const SnackBarAlert = ({text, isOpen, setIsOpen, severity}) => {
         setIsOpen(false);
     };
     return (
-        <Snackbar anchorOrigin={{ vertical:"bottom", horizontal:"center" }} open={isOpen} autoHideDuration={1500} onClose={handleClose} TransitionComponent={Slide}>
+        <Snackbar anchorOrigin={{ vertical: persist ? "top" : "bottom", horizontal: "center" }} open={isOpen} autoHideDuration={persist ? null : 1500} onClose={handleClose} TransitionComponent={Slide}>
             <Alert
                 severity={severity}
                 variant="filled"
