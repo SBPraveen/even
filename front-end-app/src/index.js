@@ -7,6 +7,7 @@ import {theme} from './theme'
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate
 } from "react-router-dom";
 import CreateWebsocketServer from './pages/CreateWebsocketServer'
 import WebsocketTestEngine from './pages/WebsocketTestEngine'
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <Layout><Error/></Layout>,
     children: [
+      {
+        index: true, 
+        element: <Navigate to="/webSocketServer" replace /> 
+      },
       {
         path: "/webSocketServer",
         element: <CreateWebsocketServer/>,
