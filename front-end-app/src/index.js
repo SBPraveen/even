@@ -21,7 +21,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: <Error/>,
+    errorElement: <Layout><Error/></Layout>,
     children: [
       {
         path: "/webSocketServer",

@@ -7,7 +7,7 @@ import { ReactComponent as KafkaServer } from '../icons/kafka_server.svg'
 import { ReactComponent as SchemaRegistry } from '../icons/schema_registry.svg'
 import { ReactComponent as WebsocketServer } from '../icons/websocket_server_icon.svg'
 import { ReactComponent as WebsocketTestEngine } from '../icons/websocket_test_engine.svg'
-const Layout = () => {
+const Layout = ({ children }) => {
     return (
         <Box sx={{ display: 'flex', width: "100vw", height: "100vh" }}>
             <Box sx={{ height: '100%', width: '57.5px', bgcolor: 'secondary.main', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', position: 'relative' }}>
@@ -44,8 +44,8 @@ const Layout = () => {
                 </Stack>
                 <Avatar sx={{ bgcolor: 'primary.main', position: 'absolute', bottom: '0', marginBottom: '1vh', width: "50" }}>P</Avatar>
             </Box>
-            <Box sx={{ height: '100vh', width: 'calc(100vw - 57.5px)', bgcolor:"primary.light" }}>
-                <Outlet />
+            <Box sx={{ height: '100vh', width: 'calc(100vw - 57.5px)', bgcolor: "primary.light" }}>
+                {children ?? <Outlet />}
             </Box>
 
         </Box>
