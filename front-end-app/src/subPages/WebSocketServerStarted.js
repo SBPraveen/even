@@ -33,18 +33,18 @@ const WebSocketServerStarted = () => {
       const diffTime = Math.abs(Number(selectedItems[0].timeStamp) - Number(selectedItems[1].timeStamp));
       setSnackbar2({
         isOpen: true,
-        message: `The Latency between selected messages is ${diffTime}`,
+        message: `The latency between selected messages is ${diffTime}`,
         severity: 'info',
       })
     }
-    else {
+    else if(isLatencyInspect ) {
       setSnackbar2({
-        isOpen: false,
-        message: Snackbar2.message,
-        severity: Snackbar2.severity
+        isOpen: true,
+        message: 'Select 2 Messages to show latency',
+        severity: 'info'
       })
     }
-  }, [noOfSelectedMessages])
+  }, [noOfSelectedMessages,isLatencyInspect])
 
   const setSnackbar2Open = (isOpen) => {
     setSnackbar2({
