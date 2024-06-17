@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Layout from './layout'
 import { Box } from '@mui/material';
 import Tabs from '../components/Tabs'
 import WebSocketInitPage from '../subPages/WebSocketServerInitPage';
@@ -21,7 +20,6 @@ const CreateWebsocketServer = () => {
   }
 
   return (
-    <Layout>
       <Box sx={{bgcolor:'primary.light', height: "100%", display:"flex", alignItems:"center", justifyContent:"flex-start", flexDirection:"column", width:"100%"}}>
         <Tabs tabsData={tabsData} onCreateNewTab={onCreateNewTab} onTabClose={onTabClose} />
           {
@@ -36,7 +34,6 @@ const CreateWebsocketServer = () => {
           }
 
       </Box>
-    </Layout>
   )
 }
 
