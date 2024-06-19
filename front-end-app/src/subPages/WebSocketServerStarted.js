@@ -12,7 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SnackBarAlert from '../components/SnackBarAlert';
 import { timeStampFormater } from '../utils';
 
-const WebSocketServerStarted = () => {
+const WebSocketServerStarted = ({ port }) => {
   const [isServerStopLoading, setIsServerStopLoading] = useState(false)
   const [jsonViewerData, setJsonViewerData] = useState(false)
   const [isLatencyInspect, setIsLatencyInspect] = useState(false)
@@ -78,7 +78,7 @@ const WebSocketServerStarted = () => {
     if (isLatencyInspect) {
       const selectedMessages = JSON.parse(JSON.stringify(noOfSelectedMessages))
       const messageIndex = selectedMessages.findIndex(item => item.msgId === message.msgId)
-      if (messageIndex > -1){ 
+      if (messageIndex > -1) {
         selectedMessages.splice(messageIndex, 1);
         setNoOfSelectedMessages(selectedMessages)
       }
@@ -120,7 +120,7 @@ const WebSocketServerStarted = () => {
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", height: "100%", }}>
           <Box sx={{ display: "flex", alignItems: "center", }}>
             <Typography sx={{ marginRight: "1.5vw" }}>Web-socket server started at</Typography>
-            <CopyBox text={"ws://localhost:3000"} />
+            <CopyBox text={`ws://localhost:${port}`} />
           </Box>
 
           <IconButton buttonName={"Stop"} Icon={() => <FlightLandIcon />} buttonBackground={"fail.main"} iconColor={"fail.light"} handleSubmit={handleStopWssServer} isLoading={isServerStopLoading} />
