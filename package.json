@@ -11,5 +11,8 @@
   },
   "devDependencies": {
     "electron": "^30.0.3"
+  },
+  "dependencies": {
+    "ws": "^8.17.0"
   }
 }

@@ -1,6 +1,7 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const url = require('url')
 const path = require('path')
+const startServer = require('./back-end-app/createWebsocketServer/startServer')
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -8,10 +9,15 @@ const createWindow = () => {
         width: 1920,
         height: 1080,
         webPreferences:{
-            webSecurity:false
+            contextIsolation:true,
+            webSecurity:false,
+            nodeIntegration: true,
+            preload: path.join(__dirname, "preload.js"),
+            icon: path.join(__dirname, 'assets', 'even_icon.png') 
         }
     })
     win.webContents.openDevTools()
+    win.setMenuBarVisibility(false);
     const startUrl = url.format({
         pathname: path.join(__dirname, './front-end-app/build/index.html'),
         protocol: 'file'
@@ -29,3 +35,5 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
   })
+
+ipcMain.on("startWebSocketServer", (event,data) => startServer(data))
