@@ -12,3 +12,7 @@ Even is a desktop based tool that helps developers to build event-driven archite
 **Starting a Kafka server locally** - Installing Kafka and starting Kafka brokers, producers, and consumers can be tedious due to the lengthy commands required. With our tool, Kafka brokers, producers, and consumers can be started with just a click of a button. Additionally, it simplifies switching between different Kafka versions, and messages are displayed using a JSON viewer for better readability.  
 
 **Schema registry** - Users can manually create schemas or have them automatically taken from AsyncAPI docs. This feature allows users to create web-socket test cases and interact with web-socket servers and Kafka seamlessly.  
+
+
+[Trello Board](https://trello.com/b/i6J4c5zB/even)
+[Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)
