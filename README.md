@@ -13,6 +13,6 @@ Even is a desktop based tool that helps developers to build event-driven archite
 
 **Schema registry** - Users can manually create schemas or have them automatically taken from AsyncAPI docs. This feature allows users to create web-socket test cases and interact with web-socket servers and Kafka seamlessly.  
 
-
-[Trello Board](https://trello.com/b/i6J4c5zB/even)
-[Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)
+## Useful Links
+[Trello Board](https://trello.com/b/i6J4c5zB/even)   
+[Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)  
