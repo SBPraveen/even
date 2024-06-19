@@ -10,54 +10,54 @@ import OnlyIconButton from '../components/buttons/OnlyIconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SnackBarAlert from '../components/SnackBarAlert';
+import { timeStampFormater } from '../utils';
 
 const WebSocketServerStarted = () => {
   const [isServerStopLoading, setIsServerStopLoading] = useState(false)
   const [jsonViewerData, setJsonViewerData] = useState(false)
   const [isLatencyInspect, setIsLatencyInspect] = useState(false)
   const [chatData, setChatData] = useState([])
-  const [Snackbar, setSnackbar] = useState({
+  const [snackbar, setSnackbar] = useState({
     isOpen: false,
     message: '',
     severity: '',
   })
-  const [Snackbar2, setSnackbar2] = useState({
+  const [persistSnackbar, setPersistSnackbar] = useState({
     isOpen: false,
     message: '',
     severity: '',
   })
-  const [noOfSelectedMessages, setNoOfSelectedMessages] = useState(0)
+  const [noOfSelectedMessages, setNoOfSelectedMessages] = useState([])
   useEffect(() => {
-    if (noOfSelectedMessages === 2) {
-      const selectedItems = chatData.filter(item => item.isSelected);
-      const diffTime = Math.abs(Number(selectedItems[0].timeStamp) - Number(selectedItems[1].timeStamp));
-      setSnackbar2({
+    if (noOfSelectedMessages.length === 2) {
+      const diffTime = timeStampFormater(Math.abs(Number(noOfSelectedMessages[0].timeStamp) - Number(noOfSelectedMessages[1].timeStamp)), false);
+      setPersistSnackbar({
         isOpen: true,
         message: `The latency between selected messages is ${diffTime}`,
         severity: 'info',
       })
     }
-    else if(isLatencyInspect ) {
-      setSnackbar2({
+    else if (isLatencyInspect) {
+      setPersistSnackbar({
         isOpen: true,
         message: 'Select 2 Messages to show latency',
         severity: 'info'
       })
     }
-  }, [noOfSelectedMessages,isLatencyInspect])
+  }, [noOfSelectedMessages, isLatencyInspect])
 
   const setSnackbar2Open = (isOpen) => {
-    setSnackbar2({
+    setPersistSnackbar({
       isOpen,
-      message: Snackbar2.message,
-      severity: Snackbar2.severity,
+      message: persistSnackbar.message,
+      severity: persistSnackbar.severity,
     })
   }
   const setSnackbarOpen = (isOpen) => {
     setSnackbar({
       isOpen,
-      message: Snackbar.message,
-      severity: Snackbar.severity,
+      message: snackbar.message,
+      severity: snackbar.severity,
     })
   }
   const handleStopWssServer = () => {
@@ -65,35 +65,28 @@ const WebSocketServerStarted = () => {
   }
   const onLatencyInspect = () => {
     if (isLatencyInspect) {
-      const chatDatas = [...chatData]
-      for (let chat of chatDatas) {
-        if (chat.isSelected) {
-          chat.isSelected = false
-        }
-      }
-      setNoOfSelectedMessages(0)
-      setChatData(chatDatas)
-      setSnackbar2({
+      setNoOfSelectedMessages([])
+      setPersistSnackbar({
         isOpen: false,
-        message: Snackbar2.message,
-        severity: Snackbar2.severity,
+        message: persistSnackbar.message,
+        severity: persistSnackbar.severity,
       })
     }
     setIsLatencyInspect(!isLatencyInspect)
   }
   const onMessageClick = (message) => {
     if (isLatencyInspect) {
-      if (message.isSelected) {
-        const chatDatas = chatData.map(item => item.msgId === message.msgId ? { ...item, isSelected: !item.isSelected } : item)
-        setChatData(chatDatas)
-        setNoOfSelectedMessages(noOfSelectedMessages - 1)
+      const selectedMessages = JSON.parse(JSON.stringify(noOfSelectedMessages))
+      const messageIndex = selectedMessages.findIndex(item => item.msgId === message.msgId)
+      if (messageIndex > -1){ 
+        selectedMessages.splice(messageIndex, 1);
+        setNoOfSelectedMessages(selectedMessages)
       }
-      else if (noOfSelectedMessages < 2) {
-        const chatDatas = chatData.map(item => item.msgId === message.msgId ? { ...item, isSelected: !item.isSelected } : item)
-        setChatData(chatDatas)
-        setNoOfSelectedMessages(noOfSelectedMessages + 1)
+      else if (selectedMessages.length < 2) {
+        selectedMessages.push(message)
+        setNoOfSelectedMessages(selectedMessages)
       }
-      else if (noOfSelectedMessages === 2) {
+      else if (selectedMessages.length === 2) {
         setSnackbar({
           isOpen: true,
           message: 'Only 2 messages can be selected',
@@ -138,7 +131,7 @@ const WebSocketServerStarted = () => {
         <Box sx={{ width: (jsonViewerData ? "60%" : "100%"), height: "98%", display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
 
           <Box sx={{ width: "100%", height: "100%", bgcolor: 'primary.white', borderRadius: "21px" }}>
-            <Chat data={chatData} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} setChatData={setChatData} />
+            <Chat data={chatData} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} setChatData={setChatData} noOfSelectedMessages={noOfSelectedMessages} />
 
           </Box>
         </Box>
@@ -155,8 +148,8 @@ const WebSocketServerStarted = () => {
         }
 
       </Box>
-      <SnackBarAlert text={Snackbar.message} isOpen={Snackbar.isOpen} setIsOpen={setSnackbarOpen} severity={Snackbar.severity} />
-      <SnackBarAlert text={Snackbar2.message} isOpen={Snackbar2.isOpen} setIsOpen={setSnackbar2Open} severity={Snackbar2.severity} persist={true} />
+      <SnackBarAlert text={snackbar.message} isOpen={snackbar.isOpen} setIsOpen={setSnackbarOpen} severity={snackbar.severity} />
+      <SnackBarAlert text={persistSnackbar.message} isOpen={persistSnackbar.isOpen} setIsOpen={setSnackbar2Open} severity={persistSnackbar.severity} persist={true} />
     </Box>
   )
 }
