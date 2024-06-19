@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Typography, Snackbar, Alert } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import SnackBarAlert from './SnackBarAlert'
 
 
@@ -12,9 +12,8 @@ const CopyBox = ({ text }) => {
     return (
         <Box onClick={handleOnCopy} sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", position: "relative", padding: "0 1rem", boxShadow: 2, bgcolor: "primary.white", borderRadius: "8px", height: "4vh", minWidth: "100px", maxHeight: "40px", minHeight: "20px", }}>
             <Typography sx={{ color: "text.backgroundMatch", cursor: "copy" }}>{text}</Typography>
-            <SnackBarAlert text={"Copied to clipboard"} isOpen={onCopyClick} setIsOpen={setOnCopyClick} severity={"success"}/>
+            <SnackBarAlert text={"Copied to clipboard"} isOpen={onCopyClick} setIsOpen={setOnCopyClick} severity={"success"} />
         </Box>
-        
     )
 }
 

@@ -4,18 +4,17 @@ import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import OnlyIconButton from './buttons/OnlyIconButton';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined';
 import SnackBarAlert from './SnackBarAlert';
 import TextButton from './buttons/TextButton'
 import IconButton from './buttons/IconButton'
 import SendIcon from '@mui/icons-material/Send';
-import CustomTextField from './textFields/CustomTextField';
 import BoxCardChild from './BoxCardChild';
 import { useTheme } from '@mui/material/styles';
-import {v4 as uuid} from 'uuid'
+import { v4 as uuid } from 'uuid'
+import { timeStampFormater } from '../utils';
 
-const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessageClick, setChatData }) => {
+const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessageClick, setChatData, noOfSelectedMessages }) => {
     const theme = useTheme();
     const [copyMessageClickedData, setCopyMessageClickedData] = useState(false)
     const [isMssgJsonEditor, setIsMssgJsonEditor] = useState(false)
@@ -33,7 +32,7 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
         const fixedStr = str.replace(/([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g, '$1"$2"$3');
         return fixedStr;
     };
-    
+
     // Helper function to parse JSON safely
     const parseJsonSafely = (str) => {
         let parsed;
@@ -45,11 +44,12 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
         }
         return { isValid: true, data: parsed };
     };
-    
+
     const handleSendMessage = () => {
         const msgData = [...data]
-        const message = {msg:'',timeStamp:Date.now(),msgId:uuid()}
+        const message = { msg: '', msgId: uuid(), isSelected: false, isSent: true }
         message.msg = parseJsonSafely(mssgData).data
+        message.timeStamp = Date.now()
         msgData.push(message)
         setChatData(msgData)
         setIsMssgJsonEditor(false)
@@ -57,13 +57,14 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
     }
     return (
         <Box sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
-            <Box sx={{display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%", height: "5%" }}>
-                    <Box  sx={{ display: "flex", alignItems: "center", justifyContent: "center", color: isLatencyInspect ? "primary.main" : "text.disabled", cursor: "pointer", marginRight:"3%" }} onClick={onLatencyInspect}>
-                        <TimerOutlinedIcon sx={{ height: "80%" }} />
-                        <Typography variant="body2" sx={{ marginLeft: "0.3vw", color: isLatencyInspect ? "primary.main" : "text.disabled", cursor: "pointer" }}>Inspect latency</Typography>
-                    </Box>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%", height: "5%" }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", color: isLatencyInspect ? "primary.main" : "text.disabled", cursor: "pointer", marginRight: "3%" }} onClick={onLatencyInspect}>
+                    <TimerOutlinedIcon sx={{ height: "80%" }} />
+                    <Typography variant="body2" sx={{ marginLeft: "0.3vw", color: isLatencyInspect ? "primary.main" : "text.disabled", cursor: "pointer" }}>Inspect latency</Typography>
+                </Box>
             </Box>
-            <Box sx={{ height: "72%", width: "100%", overflowY: "auto", overflowX: "hidden", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: '1%',
+            <Box sx={{
+                height: "72%", width: "100%", overflowY: "auto", overflowX: "hidden", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: '1%',
                 // Scrollbar styles for Webkit-based browsers (Chrome, Safari)
                 '&::-webkit-scrollbar': {
                     width: '8px',
@@ -89,11 +90,10 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
                     {
                         data.map((chat) => (
                             <Box key={chat.msgId} sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: chat.isSent && !isHalfWidth ? "flex-end" : isHalfWidth ? "center" : "flex-start", paddingBottom: chat.msgId === data[data.length - 1].msgId ? "1.5vh" : "0vh" }}>
-                                <Box sx={{ width: isHalfWidth ? "95%" : "70%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 0.5vw", height: "6vh", minHeight: "30px", maxHeight: "75px", borderRadius: "8px", bgcolor: chat.isSent ? "success.chatBg" : "fail.chatBg" }}>
-                                    
-                                    <Typography onClick={() => onMessageClick(chat)} sx={{ width: isHalfWidth ? "80%" : "88%", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "block", color: "text.main", cursor: "pointer" }}>{typeof chat.msg === 'object'? JSON.stringify(chat.msg): chat.msg}</Typography>
+                                <Box sx={{ width: isHalfWidth ? "95%" : "70%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 0.5vw", height: "6vh", minHeight: "30px", maxHeight: "75px", borderRadius: "8px", bgcolor: noOfSelectedMessages.find(item=>item.msgId === chat.msgId) ? "selected.main" : chat.isSent ? "success.chatBg" : "fail.chatBg" }}>
+                                    <Typography onClick={() => onMessageClick(chat)} sx={{ width: isHalfWidth ? "80%" : "88%", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "block", color: "text.main", cursor: "pointer" }}>{typeof chat.msg === 'object' ? JSON.stringify(chat.msg) : chat.msg}</Typography>
                                     <Box sx={{ width: isHalfWidth ? { xs: '40%', sm: '35%', md: '22%', lg: '17%', xl: '15%' } : { xs: '20%', sm: '20%', md: '20%', lg: '15%', xl: '11%' }, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                        <Typography sx={{ fontSize: { xs: '0.4rem', sm: '0.5rem', md: '0.6rem', lg: '0.7rem', xl: '0.8rem', }, color: "text.disabled", margin: 0, paddingTop: "3px" }}>{chat.timeStamp}</Typography>
+                                        <Typography sx={{ fontSize: { xs: '0.4rem', sm: '0.5rem', md: '0.6rem', lg: '0.7rem', xl: '0.8rem', }, color: "text.disabled", margin: 0, paddingTop: "3px" }}>{timeStampFormater(chat.timeStamp)}</Typography>
                                         {chat.isSent ? <ArrowUpwardOutlinedIcon sx={{ width: { xs: '17%', sm: '14%', md: '13%', lg: '12%', xl: '12%' }, color: "produce.main" }} /> : <ArrowDownwardOutlinedIcon sx={{ width: { xs: '17%', sm: '14%', md: '13%', lg: '12%', xl: '12%' }, color: "consume.main" }} />}
                                         <OnlyIconButton data={chat} Icon={ContentCopyOutlinedIcon} color={'text.disabled'} onHoverColor={'primary.main'} width='60%' onClick={onCopyToClipboard} />
 
@@ -105,9 +105,9 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
                     }
                 </Stack>
             </Box>
-            <Box sx={{ marginTop: "2%", height: "20%", width: "97%", display: "flex", alignItems: "flex-start", justifyContent: "center"}}>
-                <Box sx={{ width: isHalfWidth ? "95%" : "100%", height: "90%", display: "flex", alignItems: "flex-start", justifyContent: "center", borderRadius: "12px", boxShadow: 2, flexDirection: "column"}}>
-                    <Box sx={{ height: "32%", marginTop: "1%", marginBottom: "1%", width: "99%", display: "flex"}}>
+            <Box sx={{ marginTop: "2%", height: "20%", width: "97%", display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+                <Box sx={{ width: isHalfWidth ? "95%" : "100%", height: "90%", display: "flex", alignItems: "flex-start", justifyContent: "center", borderRadius: "12px", boxShadow: 2, flexDirection: "column" }}>
+                    <Box sx={{ height: "32%", marginTop: "1%", marginBottom: "1%", width: "99%", display: "flex" }}>
                         <Box sx={{
                             height: "100%", display: "flex", flex: 1, alignItems: "center", justifyContent: "flex-start", paddingLeft: "1%", overflow: 'hidden', overflowX: "scroll",
                             '&::-webkit-scrollbar': {
@@ -130,11 +130,9 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
                             <TextButton text={isMssgJsonEditor ? "Close Json Editor" : "Open JSON editor"} color={'text.disabled'} onHoverColor={'primary.main'} onClick={handleMssgJsonEditor} />
                         </Box>
                     </Box>
-                    <Box sx={{ height: "66%", width: "100%", display: "flex",}}>
+                    <Box sx={{ height: "66%", width: "100%", display: "flex", }}>
                         <Box sx={{ height: "100%", display: "flex", flex: 1, alignItems: "center", justifyContent: "flex-start", paddingLeft: "1%", }}>
-                            <textarea value={mssgData} onChange={(e)=>setMssgData(e.target.value)} style={{ height: "99%", width: "100%", outline: "none", border: "none", paddingTop: "0.5%", paddingBottom: "0.5%", overflow: "hidden", resize: "none" }} rows="4" cols="50">
-
-                            </textarea>
+                            <textarea value={mssgData} onChange={(e) => setMssgData(e.target.value)} style={{ height: "99%", width: "100%", outline: "none", border: "none", paddingTop: "0.5%", paddingBottom: "0.5%", overflow: "hidden", resize: "none" }} rows="4" cols="50" />
                         </Box>
                         <Box width={{
                             xs: '35%',
@@ -143,7 +141,7 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
                             lg: '20%',
                             xl: '17.5%',
                         }} sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: "1vw" }}>
-                            <IconButton  buttonName={"Send"} Icon={() => <SendIcon />} buttonBackground={"primary.main"} iconColor={"primary.iconLight"} handleSubmit={handleSendMessage} width={{
+                            <IconButton buttonName={"Send"} Icon={() => <SendIcon />} buttonBackground={"primary.main"} iconColor={"primary.iconLight"} handleSubmit={handleSendMessage} width={{
                                 xs: '100%',
                                 sm: '100%',
                                 md: '95%',
