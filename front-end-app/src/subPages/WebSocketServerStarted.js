@@ -12,7 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SnackBarAlert from '../components/SnackBarAlert';
 import { timeStampFormater } from '../utils';
 
-const WebSocketServerStarted = ({ port }) => {
+const WebSocketServerStarted = ({ port, url }) => {
   const [isServerStopLoading, setIsServerStopLoading] = useState(false)
   const [jsonViewerData, setJsonViewerData] = useState(false)
   const [isLatencyInspect, setIsLatencyInspect] = useState(false)
@@ -120,7 +120,7 @@ const WebSocketServerStarted = ({ port }) => {
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", height: "100%", }}>
           <Box sx={{ display: "flex", alignItems: "center", }}>
             <Typography sx={{ marginRight: "1.5vw" }}>Web-socket server started at</Typography>
-            <CopyBox text={`ws://localhost:${port}`} />
+            <CopyBox text={url ?? `ws://localhost:${port}`} />
           </Box>
 
           <IconButton buttonName={"Stop"} Icon={() => <FlightLandIcon />} buttonBackground={"fail.main"} iconColor={"fail.light"} handleSubmit={handleStopWssServer} isLoading={isServerStopLoading} />

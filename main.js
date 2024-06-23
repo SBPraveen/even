@@ -17,7 +17,7 @@ const createWindow = (mainWindowState) => {
             webSecurity: false,
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
-            icon: path.join(__dirname, 'assets', 'even_icon.png') 
+            icon: path.join(__dirname, 'assets', 'even_icon.png')
         }
     })
     // win.webContents.openDevTools()
