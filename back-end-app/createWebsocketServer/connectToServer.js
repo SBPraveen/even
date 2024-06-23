@@ -1,12 +1,11 @@
 const { WebSocket } = require('ws')
 
 const connectToServer = (url, cookies) => {
-    let Cookie = ``
+    let cookie = ``
     for (let item of cookies) {
-        Cookie += `${item.name}=${item.value};`
+        cookie += `${item.name}=${item.value};`
     }
-    console.log('cookies', Cookie)
-    const wss = new WebSocket(url, { headers: { Cookie } })
+    const wss = new WebSocket(url, { headers: { Cookie:cookie } })
     wss.onopen = (event) => console.log("connection Successful");
     wss.onerror = (error) => console.error(error)
     wss.onmessage = (data) => console.log('received: %s', data);
