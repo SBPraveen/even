@@ -39,10 +39,4 @@ app.on('window-all-closed', () => {
 
 ipcMain.on("startWebSocketServer", (event, data) => startServer(data))
 ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data))
-ipcMain.on('connectToServer', async (event, data) => {
-    try {
-        connectToServer(data)
-    } catch (error) {
-        console.error("Error getting cookies:", error);
-    }
-})
+ipcMain.on('connectToServer', async (event, data) =>connectToServer(data))
