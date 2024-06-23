@@ -40,26 +40,9 @@ app.on('window-all-closed', () => {
 
 ipcMain.on("startWebSocketServer", (event, data) => startServer(data))
 ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data))
-ipcMain.on("setCookies", async (event, cookie) => {
-    const { cookieName, cookieValue, cookieDomain } = cookie;
+ipcMain.on('connectToServer', async (event, data) => {
     try {
-        await mainsession.cookies.set({
-            name: cookieName,
-            value: cookieValue,
-            domain: cookieDomain,
-            sameSite: 'no_restriction',
-            httpOnly: true,
-            secure: true,
-            url: `https://${cookieDomain}`
-        });
-    } catch (error) {
-        console.error(`Error setting cookie ${cookieName}:`, error);
-    }
-})
-ipcMain.on('connectToServer', async (event, url) => {
-    try {
-        const cookies = await mainsession.cookies.get({});
-        connectToServer(url, cookies)
+        connectToServer(data)
     } catch (error) {
         console.error("Error getting cookies:", error);
     }

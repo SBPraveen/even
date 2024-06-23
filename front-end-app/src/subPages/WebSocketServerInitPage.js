@@ -40,11 +40,11 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
     setIsWssConnectLoading(true)
     setIsServerStarted(true)
     setUrl(data.url)
-    window.ipcRenderer.send('connectToServer', data.url)
+    const serverData = {...data, cookies}
+    window.ipcRenderer.send('connectToServer', serverData)
   };
   const onSubmitAddCookie = data => {
     setCookies([...cookies, { ...data, cookieId: uuidv4() }])
-    window.ipcRenderer.send('setCookies', data)
     resetAddCookie({
       cookieName: '',
       cookieDomain: '',
