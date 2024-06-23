@@ -32,8 +32,7 @@ const WebSocketInitPage = ({setIsServerStarted}) => {
   const onSubmitWssStart = data => {
     setIsWssStartLoading(true)
     setIsServerStarted(true)
-
-    window.ipcRenderer.send('startWebSocketServer', data)
+    window.ipcRenderer.startWebSocketServer(data)
   };
   const onSubmitWssConnect = data => {
     console.log(data, cookies);
