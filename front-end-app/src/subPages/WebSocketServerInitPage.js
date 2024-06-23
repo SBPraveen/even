@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Box, Typography, Divider, Grid } from '@mui/material'
 import CustomTextField from '../components/textFields/CustomTextField'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -13,11 +13,11 @@ import { v4 as uuidv4 } from 'uuid';
 import SaveIcon from '@mui/icons-material/Save';
 
 
-const WebSocketInitPage = ({setIsServerStarted, setPort}) => {
+const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
 
   const { register: registerWssStart, handleSubmit: handleSubmitWssStart } = useForm();
   const { register: registerWssConnect, handleSubmit: handleSubmitWssConnect } = useForm();
-  const { register: registerAddCookie, handleSubmit: handleSubmitAddCookie, reset: resetAddCookie, setValue:setValueAddCookie } = useForm();
+  const { register: registerAddCookie, handleSubmit: handleSubmitAddCookie, reset: resetAddCookie, setValue: setValueAddCookie } = useForm();
 
   const infoToolTipServerStart = "If cookies are added then they will be sent as a part of the request while establishing connection with the websocket server. NOTE: Cookies are generally used for authentication when connecting to a remote web-socket server"
 
@@ -39,42 +39,45 @@ const WebSocketInitPage = ({setIsServerStarted, setPort}) => {
     console.log(data, cookies);
     setIsWssConnectLoading(true)
     setIsServerStarted(true)
+    setUrl(data.url)
+    const serverData = {...data, cookies}
+    window.ipcRenderer.send('connectToServer', serverData)
   };
   const onSubmitAddCookie = data => {
-    setCookies([...cookies, {...data, cookieId:uuidv4()}])
+    setCookies([...cookies, { ...data, cookieId: uuidv4() }])
     resetAddCookie({
-      cookieName: '', 
-      cookieDomain: '', 
+      cookieName: '',
+      cookieDomain: '',
       cookieValue: ''
     })
     setIsAddCookie(false)
     console.log(data);
   };
   const onSaveEditCookie = data => {
-    const editedCookieData = {...cookieEditData, cookieName:data.cookieName, cookieDomain:data.cookieDomain, cookieValue:data.cookieValue}
+    const editedCookieData = { ...cookieEditData, cookieName: data.cookieName, cookieDomain: data.cookieDomain, cookieValue: data.cookieValue }
     const tempCookie = cookies.filter(cookie => cookie.cookieId !== editedCookieData.cookieId)
     setCookies([...tempCookie, editedCookieData])
     setIsAddCookie(false)
     setCookieEditData(false)
     resetAddCookie({
-      cookieName: '', 
-      cookieDomain: '', 
+      cookieName: '',
+      cookieDomain: '',
       cookieValue: ''
     })
   };
   const onCancelEditCookie = data => {
     setIsAddCookie(false)
     setCookieEditData(false)
-        resetAddCookie({
-      cookieName: '', 
-      cookieDomain: '', 
+    resetAddCookie({
+      cookieName: '',
+      cookieDomain: '',
       cookieValue: ''
     })
   };
   const onCancelAddCookie = data => {
     resetAddCookie({
-      cookieName: '', 
-      cookieDomain: '', 
+      cookieName: '',
+      cookieDomain: '',
       cookieValue: ''
     })
     setIsAddCookie(false)
@@ -102,7 +105,7 @@ const WebSocketInitPage = ({setIsServerStarted, setPort}) => {
     setIsAddCookie(true)
   }
 
-  
+
   return (
     <Box sx={{ width: "80%", height: "90%", display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", height: "27.5%", justifyContent: "space-around" }}>
@@ -112,7 +115,7 @@ const WebSocketInitPage = ({setIsServerStarted, setPort}) => {
             <CustomTextField placeholder={"Port"} size={'small'} fieldName={"port"} register={registerWssStart} />
             <CustomTextField placeholder={"Encryption/Decryption Key"} icon={InfoOutlinedIcon} size={'medium'} tooltip={infoTooltipMessage} isEndAdornment={true} fieldName={"enDeKey"} register={registerWssStart} />
           </Box>
-          <IconButton buttonName={"Start"} Icon={() => <FlightTakeoffIcon />} buttonBackground={"success.main"} iconColor={"success.light"} handleSubmit={handleSubmitWssStart} onSubmit={onSubmitWssStart} isLoading={isWssStartLoading}/>
+          <IconButton buttonName={"Start"} Icon={() => <FlightTakeoffIcon />} buttonBackground={"success.main"} iconColor={"success.light"} handleSubmit={handleSubmitWssStart} onSubmit={onSubmitWssStart} isLoading={isWssStartLoading} />
         </Box>
       </Box>
       <Box sx={{ height: "73.5%", display: "flex", alignItems: "center", flexDirection: "column", justifyContent: "space-around" }}>
@@ -123,83 +126,83 @@ const WebSocketInitPage = ({setIsServerStarted, setPort}) => {
         <Box sx={{ width: "47%", height: "80%", display: 'flex', alignItems: 'center', justifyContent: "flex-start", flexDirection: 'column' }}>
           <Grid container spacing={4}>
             <Grid item xs={6}>
-              <CustomTextField placeholder={"Web-socket server URL"} size={'large'} fieldName={"url"} register={registerWssConnect}/>
+              <CustomTextField placeholder={"Web-socket server URL"} size={'large'} fieldName={"url"} register={registerWssConnect} />
             </Grid>
             <Grid item xs={6}>
-            <CustomTextField placeholder={"Encryption/Decryption Key"} icon={InfoOutlinedIcon} size={'large'} tooltip={infoTooltipMessage} isEndAdornment={true} fieldName={"enDeKey"} register={registerWssConnect} />
+              <CustomTextField placeholder={"Encryption/Decryption Key"} icon={InfoOutlinedIcon} size={'large'} tooltip={infoTooltipMessage} isEndAdornment={true} fieldName={"enDeKey"} register={registerWssConnect} />
             </Grid>
             <Grid item xs={12}>
-              <BoxCard cardData={cookies} buttonName={'Add cookie'} infoToolTipMessage={infoToolTipServerStart} cardDataId={'cookieId'} onCloseCookie={onCloseCookie} onClickButton={onAddCookie} cardLabel={"cookieName"} onCloseCard={onCloseCard} onCardClick={onCardClick}/>
+              <BoxCard cardData={cookies} buttonName={'Add cookie'} infoToolTipMessage={infoToolTipServerStart} cardDataId={'cookieId'} onCloseCookie={onCloseCookie} onClickButton={onAddCookie} cardLabel={"cookieName"} onCloseCard={onCloseCard} onCardClick={onCardClick} />
             </Grid>
             {
               !isAddCookie && <Grid item xs={12}>
-                <Box sx={{width:"100%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                <IconButton buttonName={"Connect"} Icon={() => <LinkIcon />} buttonBackground={"success.main"} iconColor={"success.light"} handleSubmit={handleSubmitWssConnect} onSubmit={onSubmitWssConnect} isLoading={isWssConnectLoading}/>
+                <Box sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <IconButton buttonName={"Connect"} Icon={() => <LinkIcon />} buttonBackground={"success.main"} iconColor={"success.light"} handleSubmit={handleSubmitWssConnect} onSubmit={onSubmitWssConnect} isLoading={isWssConnectLoading} />
                 </Box>
-                </Grid>
+              </Grid>
             }
             {
               isAddCookie && <Grid item xs={4}>
-              <CustomTextField placeholder={"Cookie name"} size={'large'}  fieldName={"cookieName"} register={registerAddCookie} />
-            </Grid>
+                <CustomTextField placeholder={"Cookie name"} size={'large'} fieldName={"cookieName"} register={registerAddCookie} />
+              </Grid>
             }
             {
               isAddCookie && <Grid item xs={8}>
-              <CustomTextField placeholder={"Cookie domain"} size={'large'}  fieldName={"cookieDomain"} register={registerAddCookie} />
-            </Grid>
+                <CustomTextField placeholder={"Cookie domain"} size={'large'} fieldName={"cookieDomain"} register={registerAddCookie} />
+              </Grid>
             }
             {
               isAddCookie && <Grid item xs={12}>
-              <CustomTextField placeholder={"Cookie value"} size={'large'}  fieldName={"cookieValue"} register={registerAddCookie} />
-            </Grid>
+                <CustomTextField placeholder={"Cookie value"} size={'large'} fieldName={"cookieValue"} register={registerAddCookie} />
+              </Grid>
             }
             {
               !cookieEditData && isAddCookie && <Grid item xs={12}>
-              <Box sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", height: "4vh", minHeight: "20px", maxHeight: "40px", }}>
-                <Box sx={{
-                  width: {
-                    xs: '100%',
-                    sm: '100%',
-                    md: '75%',
-                    lg: '65%',
-                    xl: '50%',
-                  }, display: "flex", alignItems: "center", justifyContent: "space-between", height: "100%"
-                }}>
-                  <OutlinedButton color={'text.disabled'} buttonName={'Cancel'} sx={{ marginRight: "2vw" }} onClick={onCancelAddCookie}/>
-                  <IconButton buttonName={"Add cookie"} Icon={() => <CookieIcon />} buttonBackground={"primary.main"} iconColor={"primary.light"}  handleSubmit={handleSubmitAddCookie} onSubmit={onSubmitAddCookie} width={{
-                    xs: '50%',
-                    sm: '50%',
-                    md: '50%',
-                    lg: '45%',
-                    xl: '40%',
-                  }} />
+                <Box sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", height: "4vh", minHeight: "20px", maxHeight: "40px", }}>
+                  <Box sx={{
+                    width: {
+                      xs: '100%',
+                      sm: '100%',
+                      md: '75%',
+                      lg: '65%',
+                      xl: '50%',
+                    }, display: "flex", alignItems: "center", justifyContent: "space-between", height: "100%"
+                  }}>
+                    <OutlinedButton color={'text.disabled'} buttonName={'Cancel'} sx={{ marginRight: "2vw" }} onClick={onCancelAddCookie} />
+                    <IconButton buttonName={"Add cookie"} Icon={() => <CookieIcon />} buttonBackground={"primary.main"} iconColor={"primary.light"} handleSubmit={handleSubmitAddCookie} onSubmit={onSubmitAddCookie} width={{
+                      xs: '50%',
+                      sm: '50%',
+                      md: '50%',
+                      lg: '45%',
+                      xl: '40%',
+                    }} />
+                  </Box>
                 </Box>
-              </Box>
-            </Grid>
+              </Grid>
             }
             {
               cookieEditData && isAddCookie && <Grid item xs={12}>
-              <Box sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", height: "4vh", minHeight: "20px", maxHeight: "40px", }}>
-                <Box sx={{
-                  width: {
-                    xs: '100%',
-                    sm: '100%',
-                    md: '75%',
-                    lg: '65%',
-                    xl: '50%',
-                  }, display: "flex", alignItems: "center", justifyContent: "space-between", height: "100%"
-                }}>
-                  <OutlinedButton color={'text.disabled'} buttonName={'Cancel'} sx={{ marginRight: "2vw" }} onClick={onCancelEditCookie}/>
-                  <IconButton buttonName={"Save"} Icon={() => <SaveIcon />} buttonBackground={"primary.main"} iconColor={"primary.light"}  handleSubmit={handleSubmitAddCookie} onSubmit={onSaveEditCookie} width={{
-                    xs: '50%',
-                    sm: '50%',
-                    md: '50%',
-                    lg: '45%',
-                    xl: '40%',
-                  }} />
+                <Box sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", height: "4vh", minHeight: "20px", maxHeight: "40px", }}>
+                  <Box sx={{
+                    width: {
+                      xs: '100%',
+                      sm: '100%',
+                      md: '75%',
+                      lg: '65%',
+                      xl: '50%',
+                    }, display: "flex", alignItems: "center", justifyContent: "space-between", height: "100%"
+                  }}>
+                    <OutlinedButton color={'text.disabled'} buttonName={'Cancel'} sx={{ marginRight: "2vw" }} onClick={onCancelEditCookie} />
+                    <IconButton buttonName={"Save"} Icon={() => <SaveIcon />} buttonBackground={"primary.main"} iconColor={"primary.light"} handleSubmit={handleSubmitAddCookie} onSubmit={onSaveEditCookie} width={{
+                      xs: '50%',
+                      sm: '50%',
+                      md: '50%',
+                      lg: '45%',
+                      xl: '40%',
+                    }} />
+                  </Box>
                 </Box>
-              </Box>
-            </Grid>
+              </Grid>
             }
           </Grid>
         </Box>
