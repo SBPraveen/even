@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, clipboard } = require('electron')
 const url = require('url')
 const path = require('path')
 const startServer = require('./back-end-app/createWebsocketServer/startServer')
@@ -37,3 +37,4 @@ app.on('window-all-closed', () => {
   })
 
 ipcMain.on("startWebSocketServer", (event,data) => startServer(data))
+ipcMain.on("copyToClipBoard", (event,data) => clipboard.writeText(data))
