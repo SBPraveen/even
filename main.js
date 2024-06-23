@@ -17,7 +17,6 @@ const createWindow = () => {
             icon: path.join(__dirname, 'assets', 'even_icon.png')
         }
     })
-    mainsession = win.webContents.session
     win.webContents.openDevTools()
     win.setMenuBarVisibility(false);
     const startUrl = url.format({
