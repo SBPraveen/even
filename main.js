@@ -27,6 +27,11 @@ const createWindow = (mainWindowState) => {
         protocol: 'file'
     })
     win.loadURL(startUrl)
+    ipcMain.on("startWebSocketServer", (event, data) => startServer(data, win))
+    ipcMain.on("connectWebSocketServer", (event, data) => connectServer(data, win))
+    ipcMain.on("wssSendMsg", (event, data) => sendMessage(data))
+    ipcMain.on("copyToClipBoard", (event,data) => clipboard.writeText(data))
+    return win
 }
 
 app.whenReady().then(() => {
