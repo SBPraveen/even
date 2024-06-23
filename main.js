@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, clipboard } = require('electron')
 const url = require('url')
 const path = require('path')
 const { startServer, connectServer, sendMessage } = require('./back-end-app/createWebsocketServer/')
@@ -27,10 +27,6 @@ const createWindow = (mainWindowState) => {
         protocol: 'file'
     })
     win.loadURL(startUrl)
-    ipcMain.on("startWebSocketServer", (event, data) => startServer(data, win))
-    ipcMain.on("connectWebSocketServer", (event, data) => connectServer(data, win))
-    ipcMain.on("wssSendMsg", (event, data) => sendMessage(data))
-    return win
 }
 
 app.whenReady().then(() => {
