@@ -7,9 +7,11 @@ import { ReactComponent as KafkaServer } from '../icons/kafka_server.svg'
 import { ReactComponent as SchemaRegistry } from '../icons/schema_registry.svg'
 import { ReactComponent as WebsocketServer } from '../icons/websocket_server_icon.svg'
 import { ReactComponent as WebsocketTestEngine } from '../icons/websocket_test_engine.svg'
+import { Navigate } from 'react-router-dom';
 const Layout = ({ children }) => {
     return (
         <Box sx={{ display: 'flex', width: "100vw", height: "100vh" }}>
+            <Navigate to="/webSocketServer" />
             <Box sx={{ height: '100%', width: '57.5px', bgcolor: 'secondary.main', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', position: 'relative' }}>
                 <Box sx={{ marginTop: '1vh', marginBottom: '4vh', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Even width={"80%"} />

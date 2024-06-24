@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electron',{
     arch: () => os.arch  
 })
 contextBridge.exposeInMainWorld('ipcRenderer',{
-    send : (channel, data) => ipcRenderer.send(channel, data),
-    on: (channel, func) => ipcRenderer.on(channel, (event, ...args)=> func(...args)),
+    wssSendMsg : (msg) => ipcRenderer.send('wssSendMsg', msg),
+    startWebSocketServer : (msg) => ipcRenderer.send('startWebSocketServer', msg),
+    wssReceivedMsg : (callback) => ipcRenderer.on('wssReceivedMsg', (_event, value) => callback(value)),
 })

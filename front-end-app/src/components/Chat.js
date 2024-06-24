@@ -1,5 +1,5 @@
 import { Box, Stack, Typography, Tooltip } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
@@ -20,6 +20,18 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
     const [isMssgJsonEditor, setIsMssgJsonEditor] = useState(false)
     const [mssgData, setMssgData] = useState('')
     const [schemas, setSchemas] = useState([{ name: "remote digital signature", id: "1122" }, { name: "remote digital signature", id: "1177" }, { name: "job lock", id: "11522377" }, { name: "digitization", id: "1135477" }, { name: "transaction", id: "1114577" }, { name: "masters", id: "117714" }, { name: "checklist", id: "1172457" }])
+
+    
+    useEffect(() => {
+        const onMessageReceived = (value) => {
+            const msgData = [...data]
+            const message = {msg:"",timeStamp:Date.now(),msgId:uuid(), isSent:false}
+            message.msg = parseJsonSafely(String.fromCharCode.apply(null, value)).data
+            msgData.push(message)
+            setChatData(msgData)
+        }
+        window.ipcRenderer.wssReceivedMsg(onMessageReceived)
+    }, [data])
 
     const onCopyToClipboard = (message) => {
         setCopyMessageClickedData(message)
@@ -47,13 +59,14 @@ const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessage
 
     const handleSendMessage = () => {
         const msgData = [...data]
-        const message = { msg: '', msgId: uuid(), isSelected: false, isSent: true }
+        const message = { msg: '', timeStamp:Date.now(), msgId: uuid(), isSelected: false, isSent: true }
         message.msg = parseJsonSafely(mssgData).data
         message.timeStamp = Date.now()
         msgData.push(message)
         setChatData(msgData)
         setIsMssgJsonEditor(false)
         setMssgData('')
+        window.ipcRenderer.wssSendMsg(message)
     }
     return (
         <Box sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
