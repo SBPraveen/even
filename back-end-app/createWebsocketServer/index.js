@@ -1,13 +1,14 @@
 const { WebSocketServer } = require('ws')
 
 
-let wsConnection
+let wsConnection, wsMessageConnection
 
 const startServer = (data, homeWindow) => {
   try {
     const wss = new WebSocketServer({ port: data.port });
+    wsConnection = wss
     wss.on('connection', function connection(ws) {
-      wsConnection = ws
+      wsMessageConnection = ws
       ws.on('message', function message(msg) {
         console.log('received: %s', msg)
         homeWindow.webContents.send('wssReceivedMsg', msg)
@@ -25,10 +26,15 @@ const connectServer = (serverData, homeWindow) => {
     for (let item of serverData.cookies) {
       cookie += `${item.cookieName}=${item.cookieValue};`
     }
-    const wss = new WebSocket(serverData.url, { headers: { Cookie: cookie } })
-    wss.onopen = (event) => console.log("connection Successful");
-    wss.onerror = (error) => console.error(error)
-    wss.onmessage = (data) => console.log('received: %s', data);
+    wsConnection = new WebSocket(serverData.url, { headers: { Cookie: cookie } })
+    wsConnection.onopen = (event) => {
+      console.log("connection Successful");
+    }
+    wsConnection.onerror = (error) => console.error(error)
+    wsConnection.onmessage = (data) => {
+      console.log('received: %s', data);
+      homeWindow.webContents.send('wssReceivedMsg', data)
+    }
   } catch (error) {
     console.error("Error while connecting to websocket server: ", error)
   }
@@ -36,11 +42,14 @@ const connectServer = (serverData, homeWindow) => {
 
 const sendMessage = (data) => {
   try {
-    wsConnection.send(JSON.stringify(data.msg));
+    wsMessageConnection.send(JSON.stringify(data.msg));
   } catch (error) {
     console.log("Error while sending message - web socket server", error);
   }
-
-
 }
-module.exports = { startServer, connectServer, sendMessage }
+
+const stopServer = () => {
+  // if(isStartServer) wsConnection.terminate()
+  wsConnection.close()
+}
+module.exports = { startServer, connectServer, sendMessage, stopServer }
