@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, clipboard } = require('electron')
 const url = require('url')
 const path = require('path')
-const { startServer, connectServer, sendMessage } = require('./back-end-app/createWebsocketServer/')
+const { startServer, connectServer, sendMessage, stopServer } = require('./back-end-app/createWebsocketServer/')
 const windowStateKeeper = require('electron-window-state');
 
 
@@ -20,7 +20,7 @@ const createWindow = (mainWindowState) => {
             icon: path.join(__dirname, 'assets', 'even_icon.png')
         }
     })
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools()
     win.setMenuBarVisibility(false);
     const startUrl = url.format({
         pathname: path.join(__dirname, './front-end-app/build/index.html'),
@@ -29,17 +29,18 @@ const createWindow = (mainWindowState) => {
     win.loadURL(startUrl)
     ipcMain.on("startWebSocketServer", (event, data) => startServer(data, win))
     ipcMain.on("connectWebSocketServer", (event, data) => connectServer(data, win))
+    ipcMain.on("stopServer", (event) => stopServer())
     ipcMain.on("wssSendMsg", (event, data) => sendMessage(data))
-    ipcMain.on("copyToClipBoard", (event,data) => clipboard.writeText(data))
+    ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data))
     return win
 }
 
 app.whenReady().then(() => {
     let win
     let mainWindowState = windowStateKeeper({
-    defaultWidth: 1920,
-    defaultHeight: 1080
-  });
+        defaultWidth: 1920,
+        defaultHeight: 1080
+    });
     win = createWindow(mainWindowState)
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {

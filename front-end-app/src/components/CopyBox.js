@@ -7,7 +7,7 @@ const CopyBox = ({ text }) => {
     const [onCopyClick, setOnCopyClick] = useState(false)
     const handleOnCopy = () => {
         setOnCopyClick(true)
-        window.ipcRenderer.send('copyToClipBoard', text)
+        window.ipcRenderer.copyToClipBoard(text)
     }
 
     return (
