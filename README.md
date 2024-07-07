@@ -1,5 +1,5 @@
 # Even
-Even is a desktop based tool that helps developers to build event-driven architecture.  
+Even is a desktop based tool that helps developers to build real time and  event-driven architecture.  
 
 ## Features
 
