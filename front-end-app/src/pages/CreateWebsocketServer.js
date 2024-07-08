@@ -8,8 +8,8 @@ import WebSocketServerStarted from '../subPages/WebSocketServerStarted';
 const CreateWebsocketServer = () => {
   const [tabsData, setTabsData] = useState([{ text: "ws://localhost:8080", icon: "ws_connection", id: 1234 }, { text: "ws://localhost:9090", icon: "ws_server", id: 456 }, { text: "ws://localhost:7070", icon: "ws_connection", id: 789 }])
   const [isServerStarted, setIsServerStarted] = useState(false)
-  const [port, setPort] = useState(false)
-  const [url, setUrl] = useState(false)
+  const [port, setPort] = useState()
+  const [url, setUrl] = useState()
 
   const onCreateNewTab = () => {
     const tempTabsData = JSON.parse(JSON.stringify(tabsData))
@@ -27,7 +27,7 @@ const CreateWebsocketServer = () => {
       {
         isServerStarted ?
           <Box sx={{ flex: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", }}>
-            <WebSocketServerStarted port={port} url={url} />
+            <WebSocketServerStarted port={port} url={url} setIsServerStarted={setIsServerStarted} />
           </Box>
           :
           <Box sx={{ flex: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
