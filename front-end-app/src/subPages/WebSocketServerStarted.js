@@ -12,7 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SnackBarAlert from '../components/SnackBarAlert';
 import { timeStampFormater } from '../utils';
 
-const WebSocketServerStarted = ({ port, url }) => {
+const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
   const [isServerStopLoading, setIsServerStopLoading] = useState(false)
   const [jsonViewerData, setJsonViewerData] = useState(false)
   const [isLatencyInspect, setIsLatencyInspect] = useState(false)
@@ -62,6 +62,10 @@ const WebSocketServerStarted = ({ port, url }) => {
   }
   const handleStopWssServer = () => {
     setIsServerStopLoading(true)
+    window.ipcRenderer.stopServer()
+    setIsServerStopLoading(false)
+    setIsServerStarted(false)
+
   }
   const onLatencyInspect = () => {
     if (isLatencyInspect) {
