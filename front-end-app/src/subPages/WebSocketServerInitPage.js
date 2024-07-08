@@ -108,10 +108,10 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
 
   return (
     <Box sx={{ width: "80%", height: "90%", display: "flex", flexDirection: "column" }}>
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", height: "27.5%", justifyContent: "space-around" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", height: "27.5%", justifyContent: "space-around", background:"blue" }}>
         <Typography variant='h4' sx={{ color: "text.backgroundMatch" }}>Start a local server</Typography>
-        <Box sx={{ width: "47%", height: "51%", display: 'flex', alignItems: 'center', justifyContent: "space-between", flexDirection: 'column' }}>
-          <Box sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Box sx={{ width: "47%", height: "51%", display: 'flex', alignItems: 'center', justifyContent: "space-between", flexDirection: 'column', background:"red" }}>
+          <Box sx={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", }}>
             <CustomTextField placeholder={"Port"} size={'small'} fieldName={"port"} register={registerWssStart} />
             <CustomTextField placeholder={"Encryption/Decryption Key"} icon={InfoOutlinedIcon} size={'medium'} tooltip={infoTooltipMessage} isEndAdornment={true} fieldName={"enDeKey"} register={registerWssStart} />
           </Box>
