@@ -49,7 +49,7 @@ const sendMessage = (data) => {
 }
 
 const stopServer = () => {
-  // if(isStartServer) wsConnection.terminate()
+  if(wsMessageConnection) wsMessageConnection.terminate()
   wsConnection.close()
 }
 module.exports = { startServer, connectServer, sendMessage, stopServer }
