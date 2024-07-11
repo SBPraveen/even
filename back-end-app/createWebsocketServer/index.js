@@ -1,4 +1,5 @@
 const { WebSocketServer } = require('ws')
+const WebSocket = require('ws')
 
 
 let wsConnection, wsMessageConnection
@@ -26,15 +27,17 @@ const connectServer = (serverData, homeWindow) => {
     for (let item of serverData.cookies) {
       cookie += `${item.cookieName}=${item.cookieValue};`
     }
-    wsConnection = new WebSocket(serverData.url, { headers: { Cookie: cookie } })
-    wsConnection.onopen = (event) => {
+    wsConnection = new WebSocket(serverData.url, { headers: { Cookie: cookie,origin:'http://localhost:8888' } })
+    wsMessageConnection = wsConnection
+    wsConnection.on('open', (event) => {
       console.log("connection Successful");
-    }
-    wsConnection.onerror = (error) => console.error(error)
-    wsConnection.onmessage = (data) => {
+    })
+    wsConnection.on('error',(error) => console.error(error))
+    wsConnection.on('message', (data) => {
       console.log('received: %s', data);
       homeWindow.webContents.send('wssReceivedMsg', data)
-    }
+    })
+    wsConnection.on('close',(event)=> console.log('connection Closed'))
   } catch (error) {
     console.error("Error while connecting to websocket server: ", error)
   }
@@ -42,7 +45,7 @@ const connectServer = (serverData, homeWindow) => {
 
 const sendMessage = (data) => {
   try {
-    wsMessageConnection.send(JSON.stringify(data.msg));
+    wsMessageConnection.send(data.msg);
   } catch (error) {
     console.log("Error while sending message - web socket server", error);
   }

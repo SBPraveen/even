@@ -17,10 +17,11 @@ const createWindow = (mainWindowState) => {
             webSecurity: false,
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
-            icon: path.join(__dirname, 'assets', 'even_icon.png')
+            icon: path.join(__dirname, 'assets', 'even_icon.png'),
+            devTools: false
         }
     })
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
     win.setMenuBarVisibility(false);
     const startUrl = url.format({
         pathname: path.join(__dirname, './front-end-app/build/index.html'),

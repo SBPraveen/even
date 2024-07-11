@@ -12,7 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SnackBarAlert from '../components/SnackBarAlert';
 import { timeStampFormater } from '../utils';
 
-const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
+const WebSocketServerStarted = ({ port, url, setIsServerStarted, encryptionKey }) => {
   const [isServerStopLoading, setIsServerStopLoading] = useState(false)
   const [jsonViewerData, setJsonViewerData] = useState(false)
   const [isLatencyInspect, setIsLatencyInspect] = useState(false)
@@ -135,7 +135,7 @@ const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
         <Box sx={{ width: (jsonViewerData ? "60%" : "100%"), height: "98%", display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
 
           <Box sx={{ width: "100%", height: "100%", bgcolor: 'primary.white', borderRadius: "21px" }}>
-            <Chat data={chatData} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} setChatData={setChatData} noOfSelectedMessages={noOfSelectedMessages} />
+            <Chat data={chatData} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} setChatData={setChatData} noOfSelectedMessages={noOfSelectedMessages} encryptionKey={encryptionKey}/>
 
           </Box>
         </Box>

@@ -12,4 +12,5 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     wssReceivedMsg: (callback) => ipcRenderer.on('wssReceivedMsg', (_event, value) => callback(value)),
     copyToClipBoard: (data) => ipcRenderer.send('copyToClipBoard', data),
     stopServer: () => ipcRenderer.send('stopServer'),
+    connectWebSocketServer: (server) => ipcRenderer.send('connectWebSocketServer', server)
 })
