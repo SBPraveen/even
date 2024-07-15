@@ -10,7 +10,7 @@
     "start:watch": "npx electronmon --trace-warnings ."
   },
   "devDependencies": {
-    "electron": "^30.0.3"
+    "electron": "^31.2.0"
   },
   "dependencies": {
     "electron-window-state": "^5.0.3",
