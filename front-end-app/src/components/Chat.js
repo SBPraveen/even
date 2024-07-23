@@ -14,12 +14,12 @@ import { useTheme } from '@mui/material/styles';
 import { v4 as uuid } from 'uuid'
 import { timeStampFormater } from '../utils';
 
-const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessageClick, setChatData, noOfSelectedMessages }) => {
+const Chat = ({ data, isHalfWidth, onLatencyInspect, isLatencyInspect, onMessageClick, setChatData, noOfSelectedMessages, schemas }) => {
     const theme = useTheme();
     const [copyMessageClickedData, setCopyMessageClickedData] = useState(false)
     const [isMssgJsonEditor, setIsMssgJsonEditor] = useState(false)
     const [mssgData, setMssgData] = useState('')
-    const [schemas, setSchemas] = useState([{ name: "remote digital signature", id: "1122" }, { name: "remote digital signature", id: "1177" }, { name: "job lock", id: "11522377" }, { name: "digitization", id: "1135477" }, { name: "transaction", id: "1114577" }, { name: "masters", id: "117714" }, { name: "checklist", id: "1172457" }])
+    // const [schemas, setSchemas] = useState([{ name: "remote digital signature", id: "1122" }, { name: "remote digital signature", id: "1177" }, { name: "job lock", id: "11522377" }, { name: "digitization", id: "1135477" }, { name: "transaction", id: "1114577" }, { name: "masters", id: "117714" }, { name: "checklist", id: "1172457" }])
 
     
     useEffect(() => {

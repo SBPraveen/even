@@ -12,7 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SnackBarAlert from '../components/SnackBarAlert';
 import { timeStampFormater } from '../utils';
 
-const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
+const WebSocketServerStarted = ({ port, url, setIsServerStarted,schemas }) => {
   const [isServerStopLoading, setIsServerStopLoading] = useState(false)
   const [jsonViewerData, setJsonViewerData] = useState(false)
   const [isLatencyInspect, setIsLatencyInspect] = useState(false)
@@ -28,6 +28,7 @@ const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
     severity: '',
   })
   const [noOfSelectedMessages, setNoOfSelectedMessages] = useState([])
+  const texturl = url ?? `ws://localhost:${port}`
   useEffect(() => {
     if (noOfSelectedMessages.length === 2) {
       const diffTime = timeStampFormater(Math.abs(Number(noOfSelectedMessages[0].timeStamp) - Number(noOfSelectedMessages[1].timeStamp)), false);
@@ -124,7 +125,7 @@ const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", height: "100%", }}>
           <Box sx={{ display: "flex", alignItems: "center", }}>
             <Typography sx={{ marginRight: "1.5vw" }}>Web-socket server started at</Typography>
-            <CopyBox text={url ?? `ws://localhost:${port}`} />
+            <CopyBox text={texturl} />
           </Box>
 
           <IconButton buttonName={"Stop"} Icon={() => <FlightLandIcon />} buttonBackground={"fail.main"} iconColor={"fail.light"} handleSubmit={handleStopWssServer} isLoading={isServerStopLoading} />
@@ -135,7 +136,7 @@ const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
         <Box sx={{ width: (jsonViewerData ? "60%" : "100%"), height: "98%", display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
 
           <Box sx={{ width: "100%", height: "100%", bgcolor: 'primary.white', borderRadius: "21px" }}>
-            <Chat data={chatData} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} setChatData={setChatData} noOfSelectedMessages={noOfSelectedMessages} />
+            <Chat data={chatData} isHalfWidth={jsonViewerData} onLatencyInspect={onLatencyInspect} isLatencyInspect={isLatencyInspect} onMessageClick={onMessageClick} setChatData={setChatData} noOfSelectedMessages={noOfSelectedMessages} schemas={schemas}/>
 
           </Box>
         </Box>

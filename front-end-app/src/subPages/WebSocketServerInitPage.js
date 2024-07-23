@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import SaveIcon from '@mui/icons-material/Save';
 
 
-const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
+const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl, setSchemas }) => {
 
   const { register: registerWssStart, handleSubmit: handleSubmitWssStart } = useForm();
   const { register: registerWssConnect, handleSubmit: handleSubmitWssConnect } = useForm();
@@ -29,11 +29,13 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
   const [isWssStartLoading, setIsWssStartLoading] = useState(false)
   const [isWssConnectLoading, setIsWssConnectLoading] = useState(false)
 
-  const onSubmitWssStart = data => {
+  const onSubmitWssStart = async(data) => {
     setIsWssStartLoading(true)
     setIsServerStarted(true)
     setPort(data.port)
     window.ipcRenderer.startWebSocketServer(data)
+    const schemas = await window.ipcRenderer.getSchemaValues('abc')
+    setSchemas(schemas.examples ?? [])
   };
   const onSubmitWssConnect = data => {
     console.log(data, cookies);

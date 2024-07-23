@@ -3,22 +3,28 @@ const url = require('url')
 const path = require('path')
 const { startServer, connectServer, sendMessage, stopServer } = require('./back-end-app/createWebsocketServer/')
 const windowStateKeeper = require('electron-window-state');
+const { processAsyncAPIDocument } = require('./back-end-app/schemaRegistry');
+const { getDocument } = require('./back-end-app/schemaRegistry/sqlite');
 
-
+/**
+ * Creates the main application window.
+ * @param {Object} mainWindowState - The state of the main window.
+ * @returns {BrowserWindow} - The created BrowserWindow instance.
+ */
 const createWindow = (mainWindowState) => {
     const win = new BrowserWindow({
-        title: 'even',
-        x: mainWindowState.x,
-        y: mainWindowState.y,
-        width: mainWindowState.width,
         height: mainWindowState.height,
+        title: 'even',
         webPreferences: {
             contextIsolation: true,
-            webSecurity: false,
+            icon: path.join(__dirname, 'assets', 'even_icon.png'),
             nodeIntegration: true,
-            preload: path.join(__dirname, "preload.js"),
-            icon: path.join(__dirname, 'assets', 'even_icon.png')
-        }
+            preload: path.join(__dirname, 'preload.js'),
+            webSecurity: false,
+        },
+        width: mainWindowState.width,
+        x: mainWindowState.x,
+        y: mainWindowState.y,
     })
     win.webContents.openDevTools()
     win.setMenuBarVisibility(false);
@@ -27,21 +33,31 @@ const createWindow = (mainWindowState) => {
         protocol: 'file'
     })
     win.loadURL(startUrl)
-    ipcMain.on("startWebSocketServer", (event, data) => startServer(data, win))
-    ipcMain.on("connectWebSocketServer", (event, data) => connectServer(data, win))
-    ipcMain.on("stopServer", (event) => stopServer())
-    ipcMain.on("wssSendMsg", (event, data) => sendMessage(data))
-    ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data))
+    ipcMain.on('startWebSocketServer', (event, data) => startServer(data, win))
+    ipcMain.on('connectWebSocketServer', (event, data) => connectServer(data, win))
+    ipcMain.on('stopServer', () => stopServer())
+    ipcMain.on('wssSendMsg', (event, data) => sendMessage(data))
+    ipcMain.on('copyToClipBoard', (event, data) => clipboard.writeText(data))
+    ipcMain.handle('schemaRegister', async (event, route)=>{
+        const key = await processAsyncAPIDocument(route);
+        return key
+    })
+    ipcMain.handle('getSchemaValues', async (event, key) => {
+        const data = await getDocument(key)
+        return data
+    })
     return win
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
     let win
-    let mainWindowState = windowStateKeeper({
+    const mainWindowState = windowStateKeeper({
+        defaultHeight: 1080,
         defaultWidth: 1920,
-        defaultHeight: 1080
     });
     win = createWindow(mainWindowState)
+    const filePath = '../../Unifo/backend/Wss/wss-v2/async-api-template/asyncapi.json';
+    await processAsyncAPIDocument(filePath);
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             win = createWindow(mainWindowState)

@@ -7,13 +7,23 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "start:watch": "npx electronmon --trace-warnings ."
+    "start:watch": "npx electronmon --trace-warnings .",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "electron": "^30.0.3"
+    "electron": "^31.2.1",
+    "eslint": "8.57.0",
+    "eslint-plugin-check-file": "^2.8.0",
+    "eslint-plugin-jsdoc": "^48.8.3",
+    "globals": "^15.8.0"
   },
   "dependencies": {
+    "@asyncapi/converter": "^1.4.21",
     "electron-window-state": "^5.0.3",
-    "ws": "^8.17.0"
+    "fs": "^0.0.1-security",
+    "json-schema-faker": "^0.5.6",
+    "sqlite3": "^5.1.7",
+    "ws": "^8.17.0",
+    "yaml": "^2.4.5"
   }
 }
