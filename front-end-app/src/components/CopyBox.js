@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
 import { Box, Typography } from '@mui/material'
+import PropTypes from 'prop-types'
 import SnackBarAlert from './SnackBarAlert'
-
+import styles from '../styles/components/CopyBox'
+import { useState } from 'react'
 
 const CopyBox = ({ text }) => {
     const [onCopyClick, setOnCopyClick] = useState(false)
@@ -9,13 +10,26 @@ const CopyBox = ({ text }) => {
         setOnCopyClick(true)
         window.ipcRenderer.copyToClipBoard(text)
     }
-
+    const closeSnackBar = () => {
+        setOnCopyClick(false)
+    }
     return (
-        <Box onClick={handleOnCopy} sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", position: "relative", padding: "0 1rem", boxShadow: 2, bgcolor: "primary.white", borderRadius: "8px", height: "4vh", minWidth: "100px", maxHeight: "40px", minHeight: "20px", }}>
-            <Typography sx={{ color: "text.backgroundMatch", cursor: "copy" }}>{text}</Typography>
-            <SnackBarAlert text={"Copied to clipboard"} isOpen={onCopyClick} setIsOpen={setOnCopyClick} severity={"success"} />
+        <Box onClick={handleOnCopy} sx={styles.main}>
+            <Typography sx={{ color: 'text.backgroundMatch', cursor: 'copy' }}>
+                {text}
+            </Typography>
+            <SnackBarAlert
+                text={'Copied to clipboard'}
+                isOpen={onCopyClick}
+                closeSnackBar={closeSnackBar}
+                severity={'success'}
+            />
         </Box>
     )
+}
+
+CopyBox.propTypes = {
+    text: PropTypes.string.isRequired,
 }
 
 export default CopyBox
