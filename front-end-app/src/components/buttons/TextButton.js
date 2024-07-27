@@ -1,21 +1,22 @@
-import React from 'react'
+import PropTypes from 'prop-types'
 import { Typography } from '@mui/material'
+import styles from '../../styles/components/buttons/TextButton'
 
-const TextButton = ({color, text, onHoverColor, onClick}) => {
-  return (
-    <Typography onClick={onClick} variant="body2" sx={{
-        color,
-        padding:0,
-        cursor:"pointer",
-        '&:hover': {
-            backgroundColor: 'inherit', 
-            boxShadow: 'none', 
-            color: onHoverColor,
-          },
-    }}>{text}
-    </Typography>
-
-  )
+const TextButton = ({ color, onClick, onHoverColor, text }) => {
+    return (
+        <Typography
+            onClick={onClick}
+            variant='body2'
+            sx={styles.main(color, onHoverColor)}
+        >
+            {text}
+        </Typography>
+    )
 }
-
+TextButton.propTypes = {
+    color: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+    onHoverColor: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+}
 export default TextButton

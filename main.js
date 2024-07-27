@@ -1,55 +1,67 @@
-const { app, BrowserWindow, ipcMain, clipboard } = require('electron')
-const url = require('url')
-const path = require('path')
-const { startServer, connectServer, sendMessage, stopServer } = require('./back-end-app/createWebsocketServer/')
-const windowStateKeeper = require('electron-window-state');
-
+const { app, BrowserWindow, ipcMain, clipboard, dialog } = require("electron");
+const url = require("url");
+const path = require("path");
+const {
+  startServer,
+  connectServer,
+  sendMessage,
+  stopServer,
+} = require("./back-end-app/createWebsocketServer/");
+const windowStateKeeper = require("electron-window-state");
 
 const createWindow = (mainWindowState) => {
-    const win = new BrowserWindow({
-        title: 'even',
-        x: mainWindowState.x,
-        y: mainWindowState.y,
-        width: mainWindowState.width,
-        height: mainWindowState.height,
-        webPreferences: {
-            contextIsolation: true,
-            webSecurity: false,
-            nodeIntegration: true,
-            preload: path.join(__dirname, "preload.js"),
-            icon: path.join(__dirname, 'assets', 'even_icon.png')
-        }
-    })
-    win.webContents.openDevTools()
-    win.setMenuBarVisibility(false);
-    const startUrl = url.format({
-        pathname: path.join(__dirname, './front-end-app/build/index.html'),
-        protocol: 'file'
-    })
-    win.loadURL(startUrl)
-    ipcMain.on("startWebSocketServer", (event, data) => startServer(data, win))
-    ipcMain.on("connectWebSocketServer", (event, data) => connectServer(data, win))
-    ipcMain.on("stopServer", (event) => stopServer())
-    ipcMain.on("wssSendMsg", (event, data) => sendMessage(data))
-    ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data))
-    return win
-}
+  const win = new BrowserWindow({
+    title: "even",
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
+    webPreferences: {
+      contextIsolation: true,
+      webSecurity: false,
+      nodeIntegration: true,
+      preload: path.join(__dirname, "preload.js"),
+      icon: path.join(__dirname, "assets", "even_icon.png"),
+    },
+  });
+  win.webContents.openDevTools();
+  win.setMenuBarVisibility(false);
+  const startUrl = url.format({
+    pathname: path.join(__dirname, "./front-end-app/build/index.html"),
+    protocol: "file",
+  });
+  win.loadURL(startUrl);
+  ipcMain.on("startWebSocketServer", (event, data) => startServer(data, win));
+  ipcMain.on("connectWebSocketServer", (event, data) =>
+    connectServer(data, win)
+  );
+  ipcMain.on("stopServer", (event) => stopServer());
+  ipcMain.on("wssSendMsg", (event, data) => sendMessage(data));
+  ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data));
+  ipcMain.handle("fileSystemAccess", async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
+    });
+    return result.filePaths;
+  });
+  return win;
+};
 
 app.whenReady().then(() => {
-    let win
-    let mainWindowState = windowStateKeeper({
-        defaultWidth: 1920,
-        defaultHeight: 1080
-    });
-    win = createWindow(mainWindowState)
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            win = createWindow(mainWindowState)
-        }
-    })
-    mainWindowState.manage(win);
-})
+  let win;
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: 1920,
+    defaultHeight: 1080,
+  });
+  win = createWindow(mainWindowState);
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      win = createWindow(mainWindowState);
+    }
+  });
+  mainWindowState.manage(win);
+});
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
-})
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});
