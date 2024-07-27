@@ -3,7 +3,7 @@ import crypto from 'crypto-js'
 export const encryption = (messageData, key) => {
     try {
         const cipher = crypto.AES.encrypt(messageData, key)
-        return cipher.toString();
+        return cipher.toString()
     } catch (error) {
         console.error(`Encrypt Error: ${error}`)
         throw new Error('Encrypt Failed')
@@ -13,10 +13,9 @@ export const encryption = (messageData, key) => {
 export const decryption = (messageData, key) => {
     try {
         const decipher = crypto.AES.decrypt(messageData, key)
-        return decipher.toString(crypto.enc.Utf8);
+        return decipher.toString(crypto.enc.Utf8)
     } catch (error) {
         console.error(`Decrypt Error: ${error}`)
         throw new Error('Decrypt Failed')
     }
-
 }
