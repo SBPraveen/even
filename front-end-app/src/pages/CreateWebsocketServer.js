@@ -8,11 +8,11 @@ import styles from '../styles/pages/CreateWebsocketServer'
 import { useState } from 'react'
 
 const CreateWebsocketServer = () => {
-  const [tabsData, setTabsData] = useState([])
-  const [isServerStarted, setIsServerStarted] = useState(false)
-  const [port, setPort] = useState(false)
-  const [url, setUrl] = useState(false)
-  const [schemas, setSchemas] = useState([])
+    const [tabsData, setTabsData] = useState([])
+    const [isServerStarted, setIsServerStarted] = useState(false)
+    const [port, setPort] = useState(false)
+    const [url, setUrl] = useState(false)
+    const [schemas, setSchemas] = useState([])
 
     const onCreateNewTab = () => {
         const newTabData = {
@@ -28,12 +28,12 @@ const CreateWebsocketServer = () => {
         setTabsData([...tabsData, newTabData])
     }
 
-const onTabClose = (closedTab) => {
-    const tempTabsData = tabsData.filter(
-        (tab) => tab.tabId !== closedTab.tabId,
-    )
-    setTabsData(tempTabsData)
-}  
+    const onTabClose = (closedTab) => {
+        const tempTabsData = tabsData.filter(
+            (tab) => tab.tabId !== closedTab.tabId,
+        )
+        setTabsData(tempTabsData)
+    }
 
     return (
         <Box sx={styles.createWebsocketServerMain}>

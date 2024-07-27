@@ -20,7 +20,12 @@ import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line max-lines-per-function
-const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl, setSchemas }) => {
+const WebSocketInitPage = ({
+    setIsServerStarted,
+    setPort,
+    setUrl,
+    setSchemas,
+}) => {
     const { register: registerWssStart, handleSubmit: handleSubmitWssStart } =
         useForm()
     const {

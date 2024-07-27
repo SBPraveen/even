@@ -37,6 +37,7 @@ const Chat = ({
     const [copyMessageClickedData, setCopyMessageClickedData] = useState(false)
     const [isMssgJsonEditor, setIsMssgJsonEditor] = useState(false)
     const [mssgData, setMssgData] = useState('')
+    const [selectedSchema, setSelectedSchema] = useState(false)
 
     const fixJsonString = (str) => {
         // Add quotes around keys
@@ -83,10 +84,10 @@ const Chat = ({
     const handleMssgJsonEditor = () => {
         setIsMssgJsonEditor(true)
     }
-const handleSchemaSelection = (schema) => {
-    setSelectedSchemas(schema.id)
-    setMssgData(schema.payload)
-}
+    const handleSchemaSelection = (schema) => {
+        setSelectedSchema(schema.id)
+        setMssgData(schema.payload)
+    }
     const closeSnackBar = () => {
         setCopyMessageClickedData(false)
     }
@@ -324,157 +325,160 @@ const handleSchemaSelection = (schema) => {
                     ))}
                 </Stack>
             </Box>
-            <Box 
-            sx={{
-                marginTop: '2%',
-                height: selectedSchemas ? '50%' : '20%',
-                width: '97%',
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-            }}
-            >
-                <Box 
+            <Box
                 sx={{
-                    width: isHalfWidth ? '95%' : '100%',
-                    height: '90%',
+                    marginTop: '2%',
+                    height: selectedSchema ? '50%' : '20%',
+                    width: '97%',
                     display: 'flex',
                     alignItems: 'flex-start',
                     justifyContent: 'center',
-                    borderRadius: '12px',
-                    boxShadow: 2,
-                    flexDirection: 'column',
                 }}
-                >
-                    <Box 
+            >
+                <Box
                     sx={{
-                        height: '32%',
-                        marginTop: '1%',
-                        marginBottom: '1%',
-                        width: '99%',
-                        display: 'flex'
+                        width: isHalfWidth ? '95%' : '100%',
+                        height: '90%',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        justifyContent: 'center',
+                        borderRadius: '12px',
+                        boxShadow: 2,
+                        flexDirection: 'column',
                     }}
+                >
+                    <Box
+                        sx={{
+                            height: '32%',
+                            marginTop: '1%',
+                            marginBottom: '1%',
+                            width: '99%',
+                            display: 'flex',
+                        }}
                     >
-                        <Box 
-                        sx={{
-                            height: '100%',
-                            display: 'flex',
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'flex-start',
-                            paddingLeft: '1%',
-                            overflow: 'hidden',
-                            overflowX: 'scroll',
-                            '&::-webkit-scrollbar': {
-                                display: 'none',
-                            },
-                        }}
+                        <Box
+                            sx={{
+                                height: '100%',
+                                display: 'flex',
+                                flex: 1,
+                                alignItems: 'center',
+                                justifyContent: 'flex-start',
+                                paddingLeft: '1%',
+                                overflow: 'hidden',
+                                overflowX: 'scroll',
+                                '&::-webkit-scrollbar': {
+                                    display: 'none',
+                                },
+                            }}
                         >
-                            {
-                                schemas.map(schema => (
-                                    <BoxCardChild 
-                                    boxOutline={'primary.main'} 
-                                    bgColor={'primary.light'} 
-                                    key={schema.id} 
-                                    data={schema} 
-                                    dataKey={'name'} 
-                                    onCardClick={handleSchemaSelection} 
-                                    />
-                                ))
-                            }
+                            {schemas.map((schema) => (
+                                <BoxCardChild
+                                    boxOutline={'primary.main'}
+                                    bgColor={'primary.light'}
+                                    key={schema.id}
+                                    data={schema}
+                                    dataKey={'name'}
+                                    onCardClick={handleSchemaSelection}
+                                />
+                            ))}
                         </Box>
-                        <Box 
-                        width={{
-                            xs: '35%',
-                            sm: '30%',
-                            md: '25%',
-                            lg: '20%',
-                            xl: '17.5%',
-                        }} 
-                        sx={{
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            paddingRight: '1vw'
-                        }}
+                        <Box
+                            width={{
+                                xs: '35%',
+                                sm: '30%',
+                                md: '25%',
+                                lg: '20%',
+                                xl: '17.5%',
+                            }}
+                            sx={{
+                                height: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                                paddingRight: '1vw',
+                            }}
                         >
-                            <TextButton 
-                            text={
-                                isMssgJsonEditor 
-                                ? 'Close Json Editor' 
-                                : 'Open JSON editor'
-                            } 
-                            color={'text.disabled'} 
-                            onHoverColor={'primary.main'} 
-                            onClick={handleMssgJsonEditor} 
+                            <TextButton
+                                text={
+                                    isMssgJsonEditor
+                                        ? 'Close Json Editor'
+                                        : 'Open JSON editor'
+                                }
+                                color={'text.disabled'}
+                                onHoverColor={'primary.main'}
+                                onClick={handleMssgJsonEditor}
                             />
                         </Box>
                     </Box>
-                    <Box 
-                    sx={{
-                        height: selectedSchemas ? '95%' : '66%',
-                        width: '100%',
-                        display: 'flex',
-                    }}
-                    >
-                        <Box 
+                    <Box
                         sx={{
-                            height: '100%',
+                            height: selectedSchema ? '95%' : '66%',
+                            width: '100%',
                             display: 'flex',
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'flex-start',
-                            paddingLeft: '1%',
-                        }}>
-                            <textarea 
-                            value={
-                                selectedSchemas 
-                                ? JSON.stringify(mssgData) 
-                                : mssgData
-                            } 
-                            onChange={(e) => setMssgData(e.target.value)} style={{
-                                height: '99%',
-                                width: '100%',
-                                outline: 'none',
-                                border: 'none',
-                                paddingTop: '0.5%',
-                                paddingBottom: '0.5%',
-                                overflow: selectedSchemas ? 'auto' : 'hidden',
-                                resize: 'none'
-                            }} 
-                            rows='4' 
-                            cols='50' 
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                height: '100%',
+                                display: 'flex',
+                                flex: 1,
+                                alignItems: 'center',
+                                justifyContent: 'flex-start',
+                                paddingLeft: '1%',
+                            }}
+                        >
+                            <textarea
+                                value={
+                                    selectedSchema
+                                        ? JSON.stringify(mssgData)
+                                        : mssgData
+                                }
+                                onChange={(e) => setMssgData(e.target.value)}
+                                style={{
+                                    height: '99%',
+                                    width: '100%',
+                                    outline: 'none',
+                                    border: 'none',
+                                    paddingTop: '0.5%',
+                                    paddingBottom: '0.5%',
+                                    overflow: selectedSchema
+                                        ? 'auto'
+                                        : 'hidden',
+                                    resize: 'none',
+                                }}
+                                rows='4'
+                                cols='50'
                             />
                         </Box>
-                        <Box 
-                        width={{
-                            xs: '35%',
-                            sm: '30%',
-                            md: '25%',
-                            lg: '20%',
-                            xl: '17.5%',
-                        }} sx={{
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            paddingRight: '1vw'
-                        }}
-                        >
-                            <IconButton 
-                            buttonName={'Send'} 
-                            Icon={() => <SendIcon />} 
-                            buttonBackground={'primary.main'} 
-                            iconColor={'primary.iconLight'} 
-                            handleSubmit={handleSendMessage} 
+                        <Box
                             width={{
-                                xs: '100%',
-                                sm: '100%',
-                                md: '95%',
-                                lg: '90%',
-                                xl: '85%',
-                            }} 
+                                xs: '35%',
+                                sm: '30%',
+                                md: '25%',
+                                lg: '20%',
+                                xl: '17.5%',
+                            }}
+                            sx={{
+                                height: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                                paddingRight: '1vw',
+                            }}
+                        >
+                            <IconButton
+                                buttonName={'Send'}
+                                Icon={() => <SendIcon />}
+                                buttonBackground={'primary.main'}
+                                iconColor={'primary.iconLight'}
+                                handleSubmit={handleSendMessage}
+                                width={{
+                                    xs: '100%',
+                                    sm: '100%',
+                                    md: '95%',
+                                    lg: '90%',
+                                    xl: '85%',
+                                }}
                             />
                         </Box>
                     </Box>
