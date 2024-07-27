@@ -37,6 +37,7 @@ const Chat = ({
     const [copyMessageClickedData, setCopyMessageClickedData] = useState(false)
     const [isMssgJsonEditor, setIsMssgJsonEditor] = useState(false)
     const [mssgData, setMssgData] = useState('')
+    const [selectedSchema, setSelectedSchema ]= useState(false)
 
     const fixJsonString = (str) => {
         // Add quotes around keys
@@ -44,6 +45,7 @@ const Chat = ({
             /([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g,
             '$1"$2"$3',
         )
+        let a ='hello'
         return fixedStr
     }
 
@@ -84,7 +86,7 @@ const Chat = ({
         setIsMssgJsonEditor(true)
     }
 const handleSchemaSelection = (schema) => {
-    setSelectedSchemas(schema.id)
+    setSelectedSchema(schema.id)
     setMssgData(schema.payload)
 }
     const closeSnackBar = () => {
@@ -327,7 +329,7 @@ const handleSchemaSelection = (schema) => {
             <Box 
             sx={{
                 marginTop: '2%',
-                height: selectedSchemas ? '50%' : '20%',
+                height: selectedSchema ? '50%' : '20%',
                 width: '97%',
                 display: 'flex',
                 alignItems: 'flex-start',
@@ -413,7 +415,7 @@ const handleSchemaSelection = (schema) => {
                     </Box>
                     <Box 
                     sx={{
-                        height: selectedSchemas ? '95%' : '66%',
+                        height: selectedSchema ? '95%' : '66%',
                         width: '100%',
                         display: 'flex',
                     }}
@@ -429,7 +431,7 @@ const handleSchemaSelection = (schema) => {
                         }}>
                             <textarea 
                             value={
-                                selectedSchemas 
+                                selectedSchema 
                                 ? JSON.stringify(mssgData) 
                                 : mssgData
                             } 
@@ -440,7 +442,7 @@ const handleSchemaSelection = (schema) => {
                                 border: 'none',
                                 paddingTop: '0.5%',
                                 paddingBottom: '0.5%',
-                                overflow: selectedSchemas ? 'auto' : 'hidden',
+                                overflow: selectedSchema ? 'auto' : 'hidden',
                                 resize: 'none'
                             }} 
                             rows='4' 

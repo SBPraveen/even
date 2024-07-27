@@ -6,14 +6,36 @@ module.exports = {
     },
     extends: [
         "eslint:recommended",
-        // Add any additional configurations you may need
+        "plugin:react/recommended",
+        "plugin:react/jsx-runtime",
+        "plugin:react-hooks/recommended",
+        "plugin:prettier/recommended",
     ],
     parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
     },
-    plugins: ["check-file", "jsdoc"],
-    ignorePatterns: ["front-end-app/**/*.js"],
+    plugins: ["check-file", "jsdoc", "react", "prettier"],
+    ignorePatterns: [
+        "front-end-app/**/*.js",
+        "node_modules/",
+        "dist/",
+        "build/",
+        "icons/",
+        "images/",
+        "styles/",
+    ],
+    overrides: [
+        {
+            env: {
+                node: true,
+            },
+            files: ['.eslintrc.{js,cjs}'],
+            parserOptions: {
+                sourceType: 'script',
+            },
+        },
+    ],
     rules: {
         'accessor-pairs': 'error',
         'array-callback-return': 'error',
@@ -22,15 +44,20 @@ module.exports = {
         'check-file/filename-naming-convention': [
             'error',
             {
-                '**/*.{js,ts}': 'KEBAB_CASE'
+                '**/*.{js,ts}': 'KEBAB_CASE',
+                'src/components/*.js': 'PASCAL_CASE',
+                'src/pages/*.js': 'PASCAL_CASE',
+                'src/sub-pages/*.js': 'PASCAL_CASE',
             }
         ],
         'check-file/folder-naming-convention': [
             'error',
             {
-                '**/**/*': 'KEBAB_CASE'
+                '**/**/*': 'KEBAB_CASE',
+                'src/*': 'KEBAB_CASE',
             }
         ],
+        'curly': 'error',
         'default-case': 'error',
         'default-case-last': 'error',
         'default-param-last': 'error',
@@ -38,12 +65,14 @@ module.exports = {
         'eqeqeq': 'error',
         'func-name-matching': 'error',
         'id-denylist': [
-            'error', 'err', 'e',
+            'error',
+            'err', 'e',
             'cb', 'values',
             'number', 'string',
-            'boolean', 'bool'
+            'boolean', 'bool',
+            'callback', 'value'
         ],
-        'id-length': ['error', { 'min': 1 }],
+        'id-length': ['error', { 'min': 3 }],
         'indent': ['error', 4],
         'jsdoc/require-jsdoc': [
             'error',
@@ -58,9 +87,9 @@ module.exports = {
         ],
         'linebreak-style': ['error', 'unix'],
         'max-depth': ['error', 6],
-        'max-lines': 'error',
-        'max-lines-per-function': ['error', { 'max': 55, 'skipBlankLines': true, 'skipComments': true }],
-        'max-params': ['error', 6],
+        'max-lines': ['error',{'skipBlankLines': true, 'skipComments': true} ],
+        'max-lines-per-function': ['error', { 'max': 100, 'skipBlankLines': true, 'skipComments': true }],
+        'max-params': ['error', 4],
         'new-cap': 'error',
         'no-array-constructor': 'error',
         'no-await-in-loop': 'error',
@@ -135,6 +164,12 @@ module.exports = {
         'sort-keys': 'error',
         'sort-vars': 'error',
         'use-isnan': 'error',
-        'valid-typeof': 'error'
-    }
+        'valid-typeof': 'error',
+        'prettier/prettier': 'error'
+    },
+    settings: {
+        react: {
+            version: 'detect',
+        },
+    },
 };
