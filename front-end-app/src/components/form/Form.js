@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable sort-keys */
 import { Box, Grid, Tooltip, Typography } from '@mui/material'
@@ -12,15 +13,15 @@ const gridSizeCompute = (sizeText) => {
     let size
     if (sizeText === 'large') {
         size = 12
-    } else if (size === 'medium') {
-        size = 12
+    } else if (sizeText === 'medium') {
+        size = 8
     } else {
         size = 4
     }
     return size
 }
 
-const Form = ({ data, handleSubmit, onSubmit, isLoading }) => {
+const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
     return (
         <Box
             sx={{
@@ -49,10 +50,14 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading }) => {
             <Box
                 sx={{
                     width: '100%',
-                    height: '74%',
-                    background: 'blue',
+                    height: '73%',
+                    background: 'orange',
                     overflowY: 'auto',
                     marginTop: '1%',
+                    marginBottom: '1%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     '&::-webkit-scrollbar': {
                         width: '8px',
                     },
@@ -74,8 +79,12 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading }) => {
             >
                 <Grid
                     container
-                    spacing={4}
-                    sx={{ width: '100%', height: '100%', margin: '0' }}
+                    rowSpacing={1}
+                    columnSpacing={4}
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                    }}
                 >
                     {data.body &&
                         data.body.map((field, index) => (
@@ -85,13 +94,10 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading }) => {
                                     item
                                     xs={12}
                                     sx={{
-                                        background: 'white',
-                                        height: '15px',
+                                        background: 'brown',
+                                        height: '2.5vh',
                                         margin: '0',
-                                        '&.MuiGrid-item': {
-                                            paddingLeft: '0',
-                                            paddingTop: '0',
-                                        },
+                                        marginTop: '2vh',
                                     }}
                                 >
                                     <Box
@@ -101,7 +107,10 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading }) => {
                                             height: '100%',
                                         }}
                                     >
-                                        <Typography variant='body2'>
+                                        <Typography
+                                            variant='body2'
+                                            sx={{ color: 'text.main' }}
+                                        >
                                             {field.name}
                                             {field.isRequired && (
                                                 <span style={{ color: 'red' }}>
@@ -130,12 +139,28 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading }) => {
                                             key={field.type + index}
                                             item
                                             xs={gridSizeCompute(field.size)}
+                                            sx={{
+                                                background: 'magenta',
+                                            }}
                                         >
                                             {field.type === 'textfield' && (
-                                                <CustomTextField />
+                                                <CustomTextField
+                                                    placeholder={
+                                                        field.placeholder
+                                                    }
+                                                    fieldName={field.fieldName}
+                                                    register={register}
+                                                />
                                             )}
                                             {field.type === 'dropdown' && (
-                                                <DropDown />
+                                                <DropDown
+                                                    register={register}
+                                                    menu={field.options}
+                                                    fieldName={field.fieldName}
+                                                    placeholder={
+                                                        field.placeholder
+                                                    }
+                                                />
                                             )}
                                             {field.type ===
                                                 'folderSelector' && (

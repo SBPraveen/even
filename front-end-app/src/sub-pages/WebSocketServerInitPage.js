@@ -47,6 +47,19 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
     const [isWssConnectLoading, setIsWssConnectLoading] = useState(false)
 
     const onSubmitWssStart = (data) => {
+        console.log(
+            '******************************************************************************',
+        )
+        console.log(
+            '******************************************************************************',
+        )
+        console.log(data)
+        console.log(
+            '******************************************************************************',
+        )
+        console.log(
+            '******************************************************************************',
+        )
         setIsWssStartLoading(true)
         setIsServerStarted(true)
         setPort(data.port)
@@ -151,8 +164,14 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
                     justifyContent: 'space-around',
                 }}
             >
-                <Box sx={{ width: '75%', height: '45%', background: 'green' }}>
-                    <Form data={startServer()} />
+                <Box sx={{ width: '55%', height: '45%', background: 'green' }}>
+                    <Form
+                        data={startServer()}
+                        handleSubmit={handleSubmitWssStart}
+                        onSubmit={onSubmitWssStart}
+                        isLoading={isWssStartLoading}
+                        register={registerWssStart}
+                    />
                 </Box>
                 <Box
                     sx={{ width: '75%', height: '45%', background: 'yellow' }}

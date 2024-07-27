@@ -7,6 +7,7 @@ const startServer = () => ({
                 'The port where the web socket server will start. Use this port to connect from the frontend',
             fields: [
                 {
+                    fieldName: 'port',
                     placeholder: 'Port',
                     size: 'large',
                     type: 'textfield',
@@ -20,11 +21,13 @@ const startServer = () => ({
                 'Messages will be encrypted using the key and the algorithm selected when sent to the web socket server from "even" and vice versa',
             fields: [
                 {
+                    fieldName: 'enDeKey',
                     placeholder: 'Key',
                     size: 'small',
                     type: 'textfield',
                 },
                 {
+                    fieldName: 'enDeAlgorithm',
                     options: ['Advanced Encryption Standard (AES) algorithm'],
                     placeholder: 'Algorithm',
                     size: 'medium',
@@ -39,17 +42,19 @@ const startServer = () => ({
                 'If a web socket server is already present, then "even" will run your web socket server in the background, so that the browser will receive the messages sent by your web socket server as well as the messages manually sent from even. NOTE: In the "Port" field below, mention the port where your web socket server will start. Don\'t use this port to connect from the frontend',
             fields: [
                 {
+                    fieldName: 'proxyPort',
                     placeholder: 'Port',
                     size: 'small',
                     type: 'textfield',
                 },
                 {
+                    fieldName: 'proxyCommand',
                     placeholder: 'Command (Eg: yarn build && yarn start)',
                     size: 'medium',
                     type: 'textfield',
                 },
                 {
-                    placeholder: 'Command (Eg: yarn build && yarn start)',
+                    fieldName: 'proxyFolderPath',
                     size: 'large',
                     type: 'folderSelector',
                 },
