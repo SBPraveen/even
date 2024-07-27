@@ -1,10 +1,10 @@
 const { app, BrowserWindow, ipcMain, clipboard } = require('electron')
 const url = require('url')
 const path = require('path')
-const { startServer, connectServer, sendMessage, stopServer } = require('./back-end-app/createWebsocketServer/')
+const { startServer, connectServer, sendMessage, stopServer } = require('./back-end-app/create-websocket-server')
 const windowStateKeeper = require('electron-window-state');
-const { processAsyncAPIDocument } = require('./back-end-app/schemaRegistry');
-const { getDocument } = require('./back-end-app/schemaRegistry/sqlite');
+const { processAsyncAPIDocument } = require('./back-end-app/schema-registry');
+const { getDocument } = require('./back-end-app/schema-registry/sqlite');
 
 /**
  * Creates the main application window.

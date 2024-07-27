@@ -29,7 +29,7 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl, setSchemas }) 
   const [isWssStartLoading, setIsWssStartLoading] = useState(false)
   const [isWssConnectLoading, setIsWssConnectLoading] = useState(false)
 
-  const onSubmitWssStart = async(data) => {
+  const onSubmitWssStart = async (data) => {
     setIsWssStartLoading(true)
     setIsServerStarted(true)
     setPort(data.port)
@@ -42,7 +42,7 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl, setSchemas }) 
     setIsWssConnectLoading(true)
     setIsServerStarted(true)
     setUrl(data.url)
-    const serverData = {...data, cookies}
+    const serverData = { ...data, cookies }
     window.ipcRenderer.send('connectToServer', serverData)
   };
   const onSubmitAddCookie = data => {

@@ -210,7 +210,7 @@ const processAsyncAPIDocument = async (filePath) => {
 
         // Store document in SQLite
         const result = await sqliteOperations.insertOrUpdateDocument(
-            asyncapiDocument.apiName,
+            'abc',
             asyncapiDocument.version,
             asyncapiDocument.schemas,
             asyncapiDocument.examples,
