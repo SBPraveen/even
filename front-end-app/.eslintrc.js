@@ -1,66 +1,86 @@
 module.exports = {
     env: {
         browser: true,
-        node: true,
         es2021: true,
+        node: true,
     },
     extends: [
-        "eslint:recommended",
-        // Add any additional configurations you may need
+        'eslint:recommended',
+        'plugin:react/recommended',
+        'plugin:react/jsx-runtime',
+        'plugin:react-hooks/recommended',
+        'plugin:prettier/recommended',
+    ],
+    ignorePatterns: [
+        'node_modules/',
+        'dist/',
+        'build/',
+        'icons/',
+        'images/',
+        'styles/',
+    ],
+    overrides: [
+        {
+            env: {
+                node: true,
+            },
+            files: ['.eslintrc.{js,cjs}'],
+            parserOptions: {
+                sourceType: 'script',
+            },
+        },
     ],
     parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
+        ecmaVersion: 'latest',
+        sourceType: 'module',
     },
-    plugins: ["check-file", "jsdoc"],
-    ignorePatterns: ["front-end-app/**/*.js"],
+    plugins: ['react', 'check-file', 'prettier'],
     rules: {
         'accessor-pairs': 'error',
         'array-callback-return': 'error',
         'block-scoped-var': 'error',
-        'camelcase': 'error',
+        camelcase: 'error',
         'check-file/filename-naming-convention': [
             'error',
             {
-                '**/*.{js,ts}': 'KEBAB_CASE'
-            }
+                'src/components/*.js': 'PASCAL_CASE',
+                'src/pages/*.js': 'PASCAL_CASE',
+                'src/sub-pages/*.js': 'PASCAL_CASE',
+            },
         ],
         'check-file/folder-naming-convention': [
             'error',
-            {
-                '**/**/*': 'KEBAB_CASE'
-            }
+            { 'src/*': 'KEBAB_CASE' },
         ],
+        curly: 'error',
         'default-case': 'error',
         'default-case-last': 'error',
         'default-param-last': 'error',
         'dot-notation': 'error',
-        'eqeqeq': 'error',
+        eqeqeq: 'error',
         'func-name-matching': 'error',
         'id-denylist': [
-            'error', 'err', 'e',
-            'cb', 'values',
-            'number', 'string',
-            'boolean', 'bool'
+            2,
+            'err',
+            'e',
+            'cb',
+            'callback',
+            'value',
+            'values',
+            'number',
+            'string',
+            'boolean',
+            'bool',
         ],
-        'id-length': ['error', { 'min': 1 }],
-        'indent': ['error', 4],
-        'jsdoc/require-jsdoc': [
-            'error',
-            {
-                'require': {
-                    'FunctionExpression': true,
-                    'ArrowFunctionExpression': true,
-                    'FunctionDeclaration': true,
-                    'MethodDefinition': true
-                }
-            }
-        ],
+        'id-length': ['error', { min: 3 }],
         'linebreak-style': ['error', 'unix'],
-        'max-depth': ['error', 6],
+        'max-depth': 'error',
         'max-lines': 'error',
-        'max-lines-per-function': ['error', { 'max': 55, 'skipBlankLines': true, 'skipComments': true }],
-        'max-params': ['error', 6],
+        'max-lines-per-function': [
+            'error',
+            { max: 100, skipBlankLines: true, skipComments: true },
+        ],
+        'max-params': ['error', 4],
         'new-cap': 'error',
         'no-array-constructor': 'error',
         'no-await-in-loop': 'error',
@@ -129,12 +149,17 @@ module.exports = {
         'prefer-const': 'error',
         'prefer-rest-params': 'error',
         'prefer-template': 'error',
-        'quotes': ['error', 'single'],
+        quotes: ['error', 'single'],
         'require-await': 'error',
         'sort-imports': 'error',
         'sort-keys': 'error',
         'sort-vars': 'error',
         'use-isnan': 'error',
-        'valid-typeof': 'error'
-    }
-};
+        'valid-typeof': 'error',
+    },
+    settings: {
+        react: {
+            version: 'detect', // Automatically detect the React version
+        },
+    },
+}

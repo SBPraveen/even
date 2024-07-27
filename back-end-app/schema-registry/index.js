@@ -1,11 +1,10 @@
-/* eslint-disable id-length */
-const fileSystem = require('fs').promises
-const { convert } = require('@asyncapi/converter')
-const jsf = require('json-schema-faker')
-const yaml = require('yaml')
-const path = require('path')
-const sqliteOperations = require('./sqlite')
-const { randomUUID } = require('crypto')
+const fs = require('fs').promises;
+const { convert } = require('@asyncapi/converter');
+const jsf = require('json-schema-faker');
+const yaml = require('yaml');
+const path = require('path');
+const sqliteOperations = require('./sqlite');
+const { randomUUID } = require('crypto');
 
 /**
  * Determines the file type based on the file extension.
@@ -14,15 +13,11 @@ const { randomUUID } = require('crypto')
  * @throws {Error} - Throws an error if the file type is unsupported.
  */
 const getFileType = (filePath) => {
-    const ext = path.extname(filePath).toLowerCase()
-    if (ext === '.json') {
-        return 'json'
-    }
-    if (ext === '.yaml' || ext === '.yml') {
-        return 'yaml'
-    }
-    throw new Error('Unsupported file type')
-}
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === '.json') return 'json';
+    if (ext === '.yaml' || ext === '.yml') return 'yaml';
+    throw new Error('Unsupported file type');
+};
 
 /**
  * Loads an AsyncAPI document from a file.
@@ -33,19 +28,19 @@ const getFileType = (filePath) => {
  */
 const loadAsyncAPIDocument = async (filePath) => {
     try {
-        const fileType = getFileType(filePath)
-        const content = await fileSystem.readFile(filePath, 'utf8') // Use async fileSystem.readFile
+        const fileType = getFileType(filePath);
+        const content = await fs.readFile(filePath, 'utf8'); // Use async fs.readFile
 
         if (fileType === 'json') {
-            return JSON.parse(content)
+            return JSON.parse(content);
         } else if (fileType === 'yaml') {
-            return yaml.parse(content)
+            return yaml.parse(content);
         }
     } catch (error) {
-        console.error('Error loading AsyncAPI document:', error.message)
-        throw error
+        console.error('Error loading AsyncAPI document:', error.message);
+        throw error;
     }
-}
+};
 
 /**
  * Converts an AsyncAPI document to the latest version.
@@ -56,12 +51,12 @@ const loadAsyncAPIDocument = async (filePath) => {
  */
 const convertAsyncAPIDocument = async (asyncapiDoc) => {
     try {
-        return await convert(asyncapiDoc, '3.0.0') // Replace with the latest version if different
+        return await convert(asyncapiDoc, '3.0.0'); // Replace with the latest version if different
     } catch (error) {
-        console.error('Error converting AsyncAPI document:', error.message)
-        throw error
+        console.error('Error converting AsyncAPI document:', error.message);
+        throw error;
     }
-}
+};
 
 /**
  * Extracts schemas from an AsyncAPI document.
@@ -70,10 +65,10 @@ const convertAsyncAPIDocument = async (asyncapiDoc) => {
  */
 const extractSchemas = (asyncapiDoc) => {
     if (asyncapiDoc.components && asyncapiDoc.components.schemas) {
-        return asyncapiDoc.components.schemas
+        return asyncapiDoc.components.schemas;
     }
-    return {}
-}
+    return {};
+};
 
 /**
  * Extracts messages from an AsyncAPI document.
@@ -82,10 +77,10 @@ const extractSchemas = (asyncapiDoc) => {
  */
 const extractMessages = (asyncapiDoc) => {
     if (asyncapiDoc.components && asyncapiDoc.components.messages) {
-        return asyncapiDoc.components.messages
+        return asyncapiDoc.components.messages;
     }
-    return {}
-}
+    return {};
+};
 
 /**
  * Extracts URLs from an AsyncAPI document.
@@ -93,15 +88,15 @@ const extractMessages = (asyncapiDoc) => {
  * @returns {string[]} - Returns an array of URLs.
  */
 const extractUrls = (asyncapiDoc) => {
-    const urls = []
+    const urls = [];
     if (asyncapiDoc.servers) {
         for (const serverName in asyncapiDoc.servers) {
-            const server = asyncapiDoc.servers[serverName]
-            urls.push(`${server.protocol}://${server.host}`)
+            const server = asyncapiDoc.servers[serverName];
+            urls.push(`${server.protocol}://${server.host}`);
         }
     }
-    return urls
-}
+    return urls;
+};
 
 /**
  * Generates a default event based on schema.
@@ -116,28 +111,17 @@ const generateDefaultEvent = (schema, schemaId, messages, apiName) => {
         requiredOnly: true,
         useDefaultValue: true,
         useExamplesValue: true,
-    })
+    });
 
     try {
         // Find corresponding message example
-        let exampleJson = null
+        let exampleJson = null;
         if (messages) {
             const messageWithExample = Object.values(messages).find(
-                (message) =>
-                    message.payload &&
-                    message.payload.$ref &&
-                    message.payload.$ref.includes(schemaId),
-            )
-            if (
-                messageWithExample &&
-                messageWithExample.examples &&
-                messageWithExample.examples.length > 0
-            ) {
-                exampleJson = {
-                    ...messageWithExample.examples[0],
-                    apiName,
-                    id: randomUUID(),
-                }
+                (message) => message.payload && message.payload.$ref && message.payload.$ref.includes(schemaId)
+            );
+            if (messageWithExample && messageWithExample.examples && messageWithExample.examples.length > 0) {
+                exampleJson = { ...messageWithExample.examples[0], apiName, id: randomUUID() };
             }
         }
 
@@ -148,15 +132,15 @@ const generateDefaultEvent = (schema, schemaId, messages, apiName) => {
                 id: randomUUID(),
                 name: schemaId.substring(schemaId.lastIndexOf('/') + 1),
                 payload: jsf.generate(schema),
-            }
+            };
         }
 
-        return exampleJson
+        return exampleJson;
     } catch (error) {
-        console.error('Error generating default event:', error.message)
-        throw error
+        console.error('Error generating default event:', error.message);
+        throw error;
     }
-}
+};
 
 /**
  * Processes subschemas to generate examples.
@@ -168,12 +152,12 @@ const generateDefaultEvent = (schema, schemaId, messages, apiName) => {
  */
 const processSubschemas = (schema, schemaId, messages, apiName) => {
     try {
-        return generateDefaultEvent(schema, schemaId, messages, apiName)
+        return generateDefaultEvent(schema, schemaId, messages, apiName);
     } catch (error) {
-        console.error('Error processing subschemas:', error.message)
-        throw error
+        console.error('Error processing subschemas:', error.message);
+        throw error;
     }
-}
+};
 
 /**
  * Processes an AsyncAPI document: loads, converts, extracts data, and stores it in SQLite.
@@ -185,47 +169,42 @@ const processSubschemas = (schema, schemaId, messages, apiName) => {
 const processAsyncAPIDocument = async (filePath) => {
     try {
         // Load AsyncAPI document
-        const asyncapiDoc = await loadAsyncAPIDocument(filePath)
+        const asyncapiDoc = await loadAsyncAPIDocument(filePath);
 
         // Convert to the latest version
-        const latestAsyncAPIDoc = await convertAsyncAPIDocument(asyncapiDoc)
+        const latestAsyncAPIDoc = await convertAsyncAPIDocument(asyncapiDoc);
 
         // Extract information
-        const apiName = latestAsyncAPIDoc.info.title || 'Unknown API'
-        const version = latestAsyncAPIDoc.info.version || 'Unknown Version'
+        const apiName = latestAsyncAPIDoc.info.title || 'Unknown API';
+        const version = latestAsyncAPIDoc.info.version || 'Unknown Version';
         const asyncapiDocument = {
             apiName,
             examples: [],
             schemas: [],
             urls: extractUrls(latestAsyncAPIDoc),
             version,
-        }
+        };
 
         // Extract schemas and messages
-        const componentsSchemas = extractSchemas(latestAsyncAPIDoc)
-        const componentsMessages = extractMessages(latestAsyncAPIDoc)
+        const componentsSchemas = extractSchemas(latestAsyncAPIDoc);
+        const componentsMessages = extractMessages(latestAsyncAPIDoc);
 
         // Process each schema
         for (const schemaNamespace in componentsSchemas) {
-            const namespaceSchemas = componentsSchemas[schemaNamespace]
+            const namespaceSchemas = componentsSchemas[schemaNamespace];
             for (const schemaName in namespaceSchemas) {
-                const schema = namespaceSchemas[schemaName]
-                const schemaId = `#/components/schemas/${schemaNamespace}/${schemaName}`
+                const schema = namespaceSchemas[schemaName];
+                const schemaId = `#/components/schemas/${schemaNamespace}/${schemaName}`;
 
                 // Generate examples for the main schema and subschemas recursively
-                const examples = processSubschemas(
-                    schema,
-                    schemaId,
-                    componentsMessages,
-                    apiName,
-                )
+                const examples = processSubschemas(schema, schemaId, componentsMessages, apiName);
 
                 // Add schema and examples to the document
                 asyncapiDocument.schemas.push({
-                    [schemaName]: schema,
-                })
+                    [schemaName]: schema
+                });
 
-                asyncapiDocument.examples.push(examples)
+                asyncapiDocument.examples.push(examples);
             }
         }
 
@@ -235,21 +214,19 @@ const processAsyncAPIDocument = async (filePath) => {
             asyncapiDocument.version,
             asyncapiDocument.schemas,
             asyncapiDocument.examples,
-            asyncapiDocument.urls,
-        )
+            asyncapiDocument.urls
+        );
 
         if (result.action === 'inserted') {
-            console.log(`Inserted new AsyncAPI document with ID ${result.id}`)
+            console.log(`Inserted new AsyncAPI document with ID ${result.id}`);
         } else if (result.action === 'updated') {
-            console.log(
-                `Updated existing AsyncAPI document with ${result.changes} changes`,
-            )
+            console.log(`Updated existing AsyncAPI document with ${result.changes} changes`);
         }
-        return apiName
+        return apiName;
     } catch (error) {
-        console.error('Error processing AsyncAPI document:', error.message)
-        throw error
+        console.error('Error processing AsyncAPI document:', error.message);
+        throw error;
     }
-}
+};
 
-module.exports = { processAsyncAPIDocument }
+module.exports = { processAsyncAPIDocument };

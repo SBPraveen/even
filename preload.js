@@ -1,5 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron')
-const operatingSys = require('os')
+const { contextBridge, ipcRenderer } = require('electron');
+const os = require('os');
 
 /**
  * Exposes OS-related functions to the renderer process.
@@ -9,20 +9,21 @@ contextBridge.exposeInMainWorld('electron', {
      * Returns the architecture of the operating system.
      * @returns {string} The OS architecture.
      */
-    arch: () => operatingSys.arch(),
+    arch: () => os.arch(),
 
     /**
      * Returns the home directory of the current user.
      * @returns {string} The home directory path.
      */
-    homedir: () => operatingSys.homedir(),
+    homedir: () => os.homedir(),
 
     /**
      * Returns the operating system version.
      * @returns {string} The OS version.
      */
-    osVersion: () => operatingSys.version(),
-})
+    osVersion: () => os.version(),
+
+});
 
 /**
  * Exposes IPC-related functions to the renderer process.
@@ -57,8 +58,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
      * Starts the WebSocket server.
      * @param {Object} msg - The data to start the server.
      */
-    startWebSocketServer: (msg) =>
-        ipcRenderer.send('startWebSocketServer', msg),
+    startWebSocketServer: (msg) => ipcRenderer.send('startWebSocketServer', msg),
 
     /**
      * Stops the WebSocket server.
@@ -67,16 +67,14 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
     /**
      * Listens for messages from the WebSocket server.
-     * @param {Function} cbFunction - The callback function to handle received messages.
+     * @param {Function} callback - The callback function to handle received messages.
      */
-    wssReceivedMsg: (cbFunction) =>
-        ipcRenderer.on('wssReceivedMsg', (_event, recivedMessage) =>
-            cbFunction(recivedMessage),
-        ),
+    wssReceivedMsg: (callback) => ipcRenderer.on('wssReceivedMsg', (_event, value) => callback(value)),
 
     /**
      * Sends a WebSocket message.
      * @param {string} msg - The message to send.
      */
     wssSendMsg: (msg) => ipcRenderer.send('wssSendMsg', msg),
-})
+
+});
