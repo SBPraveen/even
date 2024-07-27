@@ -1,1 +1,1 @@
-export { timeStampFormater } from './timeStampFormater'
+export { timeStampFormatter } from './timeStampFormatter'

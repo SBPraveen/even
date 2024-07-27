@@ -38,13 +38,19 @@ const createWindow = (mainWindowState) => {
     ipcMain.on('stopServer', () => stopServer())
     ipcMain.on('wssSendMsg', (event, data) => sendMessage(data))
     ipcMain.on('copyToClipBoard', (event, data) => clipboard.writeText(data))
-    ipcMain.handle('schemaRegister', async (event, route)=>{
+    ipcMain.handle('schemaRegister', async (event, route) => {
         const key = await processAsyncAPIDocument(route);
         return key
     })
     ipcMain.handle('getSchemaValues', async (event, key) => {
         const data = await getDocument(key)
         return data
+    })
+    ipcMain.handle('fileSystemAccess', async () => {
+        const result = await dialog.showOpenDialog({
+            properties: ['openDirectory'],
+        });
+        return result.filePaths;
     })
     return win
 }
@@ -67,5 +73,5 @@ app.whenReady().then(async () => {
 })
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
-})
+    if (process.platform !== 'darwin') app.quit();
+});
