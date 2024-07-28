@@ -7,6 +7,10 @@ const {
     sendMessage,
     stopServer,
 } = require('./back-end-app/createWebsocketServer/')
+const {
+    kafkaReceiveMsg,
+    producerSendMessage,
+} = require('./back-end-app/kafka-server/')
 const windowStateKeeper = require('electron-window-state')
 const {
     deleteDocument,
@@ -48,6 +52,10 @@ const createWindow = (mainWindowState) => {
     )
     ipcMain.on('stopServer', (event) => stopServer())
     ipcMain.on('wssSendMsg', (event, data) => sendMessage(data))
+
+    ipcMain.on('kafkaSendMsg', (event, data) => producerSendMessage(data))
+
+    ipcMain.on('kafkaConsumerStarter', (event) => kafkaReceiveMsg(win))
     ipcMain.on('copyToClipBoard', (event, data) => clipboard.writeText(data))
     ipcMain.handle('fileSystemAccess', async () => {
         const result = await dialog.showOpenDialog({
@@ -83,9 +91,10 @@ const createWindow = (mainWindowState) => {
                 nodeIntegration: true,
                 preload: path.join(__dirname, 'preload.js'),
                 icon: path.join(__dirname, 'assets', 'even_icon.png'),
+                devTools: false,
             },
         })
-        newWin.webContents.openDevTools()
+        // newWin.webContents.openDevTools()
         newWin.setMenuBarVisibility(false)
         const startUrl = url.format({
             pathname: path.join(__dirname, './front-end-app/build/index.html'),
@@ -108,16 +117,16 @@ const createWindow = (mainWindowState) => {
                 nodeIntegration: true,
                 preload: path.join(__dirname, 'preload.js'),
                 icon: path.join(__dirname, 'assets', 'even_icon.png'),
+                devTools: false,
             },
         })
-        newWin.webContents.openDevTools()
+        // newWin.webContents.openDevTools()
         newWin.setMenuBarVisibility(false)
         const startUrl = url.format({
             pathname: path.join(__dirname, './front-end-app/build/index.html'),
             protocol: 'file',
         })
         newWin.loadURL(startUrl)
-        ipcMain.on('kafkaSendMsg', (event, data) => console.log(data))
         return newWin
     })
     return win
@@ -131,7 +140,7 @@ app.whenReady().then(async () => {
     })
     win = createWindow(mainWindowState)
     const filePath =
-        '../../Unifo/backend/Wss/wss-v2/async-api-template/asyncapi.json'
+        '../../../WSS-Repos/wss-v2/async-api-template/asyncapi.json'
     await processAsyncAPIDocument(filePath)
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {

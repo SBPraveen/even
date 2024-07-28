@@ -1,9 +1,9 @@
 const { WebSocketServer, WebSocket } = require('ws')
 const { stopProject, runProject } = require('./proxy-server')
 
-let wsMessageConnection, process
-const connections = new Map()
-let connectionId = 0
+let wsMessageConnection, process;
+const connections = new Map();
+let connectionId = 0;
 
 const startServer = (data, homeWindow) => {
     try {
@@ -41,7 +41,6 @@ const startServer = (data, homeWindow) => {
                 connectionDetails.backendWs = backendWs
 
                 ws.on('message', function message(msg) {
-                    console.log('received from frontend: %s', msg)
                     if (backendWs.readyState === WebSocket.OPEN) {
                         backendWs.send(msg)
                     }
@@ -53,7 +52,6 @@ const startServer = (data, homeWindow) => {
                 })
 
                 backendWs.on('message', (backendMsg) => {
-                    console.log('received from backend: %s', backendMsg)
                     if (ws.readyState === WebSocket.OPEN) {
                         ws.send(backendMsg.toString())
                     }
@@ -76,7 +74,6 @@ const startServer = (data, homeWindow) => {
                 })
             }
             ws.on('message', function message(msg) {
-                console.log('received from client: %s', msg)
                 homeWindow.webContents.send('wssReceivedMsg', msg, 'browser')
             })
 
@@ -122,7 +119,6 @@ const connectServer = (serverData, homeWindow) => {
             console.error('WebSocket error occurred: ', error)
         }
         ws.on('message', function message(data) {
-            console.log('received: %s', data)
             homeWindow.webContents.send('wssReceivedMsg', data, 'server')
         })
         ws.onclose = (event) => {
@@ -166,4 +162,4 @@ const stopServer = () => {
     stopProject(process)
 }
 
-module.exports = { startServer, connectServer, sendMessage, stopServer }
+module.exports = { startServer, connectServer, sendMessage, stopServer };

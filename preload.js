@@ -25,5 +25,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     kafkaSendMsg: (msg) => ipcRenderer.send('kafkaSendMsg', msg),
     getSchemaValues: (key) => ipcRenderer.invoke('getSchemaValues', key),
     schemaRegister: (route) => ipcRenderer.invoke('schemaRegister', route),
-    getAllDocuments: () => ipcRenderer.invoke('getAllDocuments')
+    getAllDocuments: () => ipcRenderer.invoke('getAllDocuments'),
+    kafkaConsumerStarter: ()=>ipcRenderer.send("kafkaConsumerStarter"),
+    kafkaReceiveMsg: (callback) =>
+      ipcRenderer.on("kafkaReceiveMsg", (_event, value) => callback(value))
 })
