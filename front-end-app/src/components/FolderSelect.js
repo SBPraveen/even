@@ -1,17 +1,16 @@
 /* eslint-disable react/no-unknown-property */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { Box, Typography } from '@mui/material'
+import PropTypes from 'prop-types'
 import { useController } from 'react-hook-form'
 import { useState } from 'react'
 
 const FolderSelect = ({ control, name }) => {
+    const [path, setPath] = useState('')
     const { field } = useController({
         control,
         defaultValue: '',
         name,
     })
-    const [path, setPath] = useState('')
 
     const handleChange = async () => {
         const path = await window.ipcRenderer.fileSystemAccess()
@@ -44,6 +43,11 @@ const FolderSelect = ({ control, name }) => {
             )}
         </Box>
     )
+}
+
+FolderSelect.propTypes = {
+    control: PropTypes.object.isRequired,
+    name: PropTypes.string.isRequired,
 }
 
 export default FolderSelect
