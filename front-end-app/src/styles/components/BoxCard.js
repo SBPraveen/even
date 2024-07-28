@@ -32,13 +32,6 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
     },
-    buttonSectionInfo: {
-        color: 'text.disabled',
-        fontSize: '1rem',
-        cursor: 'pointer',
-        position: 'absolute',
-        right: '15px',
-    },
 }
 
 export default styles
