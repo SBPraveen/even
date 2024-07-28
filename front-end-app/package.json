@@ -20,7 +20,9 @@
         "react-scripts": "5.0.1",
         "semver": "^7.6.2",
         "uuid": "^10.0.0",
-        "web-vitals": "^2.1.4"
+        "web-vitals": "^2.1.4",
+        "xterm": "^5.3.0",
+        "xterm-addon-fit": "^0.8.0"
     },
     "scripts": {
         "start": "react-scripts start",

@@ -2,6 +2,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable sort-keys */
 import { Box, Grid, Tooltip, Typography } from '@mui/material'
+import { Controller } from 'react-hook-form'
 import CustomTextField from '../textFields/CustomTextField'
 import DropDown from '../DropDown'
 import FolderSelect from '../FolderSelect'
@@ -21,7 +22,14 @@ const gridSizeCompute = (sizeText) => {
     return size
 }
 
-const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
+const Form = ({
+    data,
+    handleSubmit,
+    onSubmit,
+    isLoading,
+    register,
+    control,
+}) => {
     return (
         <Box
             sx={{
@@ -164,7 +172,21 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
                                             )}
                                             {field.type ===
                                                 'folderSelector' && (
-                                                <FolderSelect />
+                                                <Controller
+                                                    control={control}
+                                                    name={field.fieldName}
+                                                    render={({
+                                                        field: { onChange },
+                                                    }) => (
+                                                        <FolderSelect
+                                                            control={control}
+                                                            name={
+                                                                field.fieldName
+                                                            }
+                                                            onChange={onChange}
+                                                        />
+                                                    )}
+                                                />
                                             )}
                                         </Grid>
                                     ))}
@@ -237,6 +259,7 @@ Form.propTypes = {
     isLoading: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
+    control: PropTypes.object.isRequired,
 }
 
 export default Form

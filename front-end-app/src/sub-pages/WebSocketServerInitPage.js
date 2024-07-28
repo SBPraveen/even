@@ -21,8 +21,11 @@ import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line max-lines-per-function
 const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
-    const { register: registerWssStart, handleSubmit: handleSubmitWssStart } =
-        useForm()
+    const {
+        register: registerWssStart,
+        handleSubmit: handleSubmitWssStart,
+        control,
+    } = useForm()
     const {
         register: registerWssConnect,
         handleSubmit: handleSubmitWssConnect,
@@ -46,7 +49,7 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
     const [isWssStartLoading, setIsWssStartLoading] = useState(false)
     const [isWssConnectLoading, setIsWssConnectLoading] = useState(false)
 
-    const onSubmitWssStart = (data) => {
+    const onSubmitWssStart = async (data) => {
         console.log(
             '******************************************************************************',
         )
@@ -63,7 +66,11 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
         setIsWssStartLoading(true)
         setIsServerStarted(true)
         setPort(data.port)
-        window.ipcRenderer.startWebSocketServer(data)
+        const serverStatus = await window.ipcRenderer.startWebSocketServer(data)
+        if (!serverStatus) {
+            setIsWssStartLoading(false)
+            setIsServerStarted(false)
+        }
     }
     const onSubmitWssConnect = (data) => {
         console.log(data, cookies)
@@ -171,6 +178,7 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
                         onSubmit={onSubmitWssStart}
                         isLoading={isWssStartLoading}
                         register={registerWssStart}
+                        control={control}
                     />
                 </Box>
                 <Box

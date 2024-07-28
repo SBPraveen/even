@@ -22,6 +22,7 @@ import BoxCardChild from './BoxCardChild'
 import { useTheme } from '@mui/material/styles'
 import { v4 as uuid } from 'uuid'
 import { timeStampFormatter } from '../utils'
+// import TerminalComponent from './Terminal'
 
 const Chat = ({
     data,
@@ -31,6 +32,8 @@ const Chat = ({
     onMessageClick,
     setChatData,
     noOfSelectedMessages,
+    isConsumer,
+    isProducer,
 }) => {
     const theme = useTheme()
     const [copyMessageClickedData, setCopyMessageClickedData] = useState(false)
@@ -82,8 +85,10 @@ const Chat = ({
             msgData.push(message)
             setChatData(msgData)
         }
-        window.ipcRenderer.wssReceivedMsg(onMessageReceived)
-    }, [data])
+        if (!isConsumer && !isProducer) {
+            window.ipcRenderer.wssReceivedMsg(onMessageReceived)
+        }
+    }, [data, isConsumer, isProducer])
 
     const onCopyToClipboard = (message) => {
         setCopyMessageClickedData(message)
@@ -111,7 +116,11 @@ const Chat = ({
         setChatData(msgData)
         setIsMssgJsonEditor(false)
         setMssgData('')
-        window.ipcRenderer.wssSendMsg(message)
+        if (isProducer) {
+            window.ipcRenderer.kafkaSendMsg(message)
+        } else {
+            window.ipcRenderer.wssSendMsg(message)
+        }
     }
     return (
         <Box
@@ -124,43 +133,45 @@ const Chat = ({
                 flexDirection: 'column',
             }}
         >
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    width: '100%',
-                    height: '5%',
-                }}
-            >
+            {onLatencyInspect && (
                 <Box
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        color: isLatencyInspect
-                            ? 'primary.main'
-                            : 'text.disabled',
-                        cursor: 'pointer',
-                        marginRight: '3%',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+                        height: '5%',
                     }}
-                    onClick={onLatencyInspect}
                 >
-                    <TimerOutlinedIcon sx={{ height: '80%' }} />
-                    <Typography
-                        variant='body2'
+                    <Box
                         sx={{
-                            marginLeft: '0.3vw',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             color: isLatencyInspect
                                 ? 'primary.main'
                                 : 'text.disabled',
                             cursor: 'pointer',
+                            marginRight: '3%',
                         }}
+                        onClick={onLatencyInspect}
                     >
-                        Inspect latency
-                    </Typography>
+                        <TimerOutlinedIcon sx={{ height: '80%' }} />
+                        <Typography
+                            variant='body2'
+                            sx={{
+                                marginLeft: '0.3vw',
+                                color: isLatencyInspect
+                                    ? 'primary.main'
+                                    : 'text.disabled',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Inspect latency
+                        </Typography>
+                    </Box>
                 </Box>
-            </Box>
+            )}
             <Box
                 sx={{
                     height: '72%',
@@ -329,158 +340,169 @@ const Chat = ({
                     ))}
                 </Stack>
             </Box>
-            <Box
-                sx={{
-                    marginTop: '2%',
-                    height: '20%',
-                    width: '97%',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'center',
-                }}
-            >
+            {!isConsumer && (
                 <Box
                     sx={{
-                        width: isHalfWidth ? '95%' : '100%',
-                        height: '90%',
+                        marginTop: '2%',
+                        height: '20%',
+                        width: '97%',
                         display: 'flex',
                         alignItems: 'flex-start',
                         justifyContent: 'center',
-                        borderRadius: '12px',
-                        boxShadow: 2,
-                        flexDirection: 'column',
                     }}
                 >
                     <Box
                         sx={{
-                            height: '32%',
-                            marginTop: '1%',
-                            marginBottom: '1%',
-                            width: '99%',
+                            width: isHalfWidth ? '95%' : '100%',
+                            height: '90%',
                             display: 'flex',
+                            alignItems: 'flex-start',
+                            justifyContent: 'center',
+                            borderRadius: '12px',
+                            boxShadow: 2,
+                            flexDirection: 'column',
                         }}
                     >
                         <Box
                             sx={{
-                                height: '100%',
+                                height: '32%',
+                                marginTop: '1%',
+                                marginBottom: '1%',
+                                width: '99%',
                                 display: 'flex',
-                                flex: 1,
-                                alignItems: 'center',
-                                justifyContent: 'flex-start',
-                                paddingLeft: '1%',
-                                overflow: 'hidden',
-                                overflowX: 'scroll',
-                                '&::-webkit-scrollbar': {
-                                    display: 'none',
-                                },
                             }}
                         >
-                            {schemas.map((schema) => (
-                                <BoxCardChild
-                                    boxOutline={'primary.main'}
-                                    bgColor={'primary.light'}
-                                    key={schema.id}
-                                    data={schema}
-                                    dataKey={'name'}
-                                />
-                            ))}
-                        </Box>
-                        <Box
-                            width={{
-                                xs: '35%',
-                                sm: '30%',
-                                md: '25%',
-                                lg: '20%',
-                                xl: '17.5%',
-                            }}
-                            sx={{
-                                height: '100%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'flex-end',
-                                paddingRight: '1vw',
-                            }}
-                        >
-                            <TextButton
-                                text={
-                                    isMssgJsonEditor
-                                        ? 'Close Json Editor'
-                                        : 'Open JSON editor'
-                                }
-                                color={'text.disabled'}
-                                onHoverColor={'primary.main'}
-                                onClick={handleMssgJsonEditor}
-                            />
-                        </Box>
-                    </Box>
-                    <Box sx={{ height: '66%', width: '100%', display: 'flex' }}>
-                        <Box
-                            sx={{
-                                height: '100%',
-                                display: 'flex',
-                                flex: 1,
-                                alignItems: 'center',
-                                justifyContent: 'flex-start',
-                                paddingLeft: '1%',
-                            }}
-                        >
-                            <textarea
-                                value={mssgData}
-                                onChange={(e) => setMssgData(e.target.value)}
-                                style={{
-                                    height: '99%',
-                                    width: '100%',
-                                    outline: 'none',
-                                    border: 'none',
-                                    paddingTop: '0.5%',
-                                    paddingBottom: '0.5%',
+                            <Box
+                                sx={{
+                                    height: '100%',
+                                    display: 'flex',
+                                    flex: 1,
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-start',
+                                    paddingLeft: '1%',
                                     overflow: 'hidden',
-                                    resize: 'none',
+                                    overflowX: 'scroll',
+                                    '&::-webkit-scrollbar': {
+                                        display: 'none',
+                                    },
                                 }}
-                                rows='4'
-                                cols='50'
-                            />
+                            >
+                                {schemas.map((schema) => (
+                                    <BoxCardChild
+                                        boxOutline={'primary.main'}
+                                        bgColor={'primary.light'}
+                                        key={schema.id}
+                                        data={schema}
+                                        dataKey={'name'}
+                                    />
+                                ))}
+                            </Box>
+                            <Box
+                                width={{
+                                    xs: '35%',
+                                    sm: '30%',
+                                    md: '25%',
+                                    lg: '20%',
+                                    xl: '17.5%',
+                                }}
+                                sx={{
+                                    height: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-end',
+                                    paddingRight: '1vw',
+                                }}
+                            >
+                                <TextButton
+                                    text={
+                                        isMssgJsonEditor
+                                            ? 'Close Json Editor'
+                                            : 'Open JSON editor'
+                                    }
+                                    color={'text.disabled'}
+                                    onHoverColor={'primary.main'}
+                                    onClick={handleMssgJsonEditor}
+                                />
+                            </Box>
                         </Box>
                         <Box
-                            width={{
-                                xs: '35%',
-                                sm: '30%',
-                                md: '25%',
-                                lg: '20%',
-                                xl: '17.5%',
-                            }}
                             sx={{
-                                height: '100%',
+                                height: '66%',
+                                width: '100%',
                                 display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'flex-end',
-                                paddingRight: '1vw',
                             }}
                         >
-                            <IconButton
-                                buttonName={'Send'}
-                                Icon={() => <SendIcon />}
-                                buttonBackground={'primary.main'}
-                                iconColor={'primary.iconLight'}
-                                handleSubmit={handleSendMessage}
-                                width={{
-                                    xs: '100%',
-                                    sm: '100%',
-                                    md: '95%',
-                                    lg: '90%',
-                                    xl: '85%',
+                            <Box
+                                sx={{
+                                    height: '100%',
+                                    display: 'flex',
+                                    flex: 1,
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-start',
+                                    paddingLeft: '1%',
                                 }}
-                            />
+                            >
+                                <textarea
+                                    value={mssgData}
+                                    onChange={(e) =>
+                                        setMssgData(e.target.value)
+                                    }
+                                    style={{
+                                        height: '99%',
+                                        width: '100%',
+                                        outline: 'none',
+                                        border: 'none',
+                                        paddingTop: '0.5%',
+                                        paddingBottom: '0.5%',
+                                        overflow: 'hidden',
+                                        resize: 'none',
+                                    }}
+                                    rows='4'
+                                    cols='50'
+                                />
+                            </Box>
+                            <Box
+                                width={{
+                                    xs: '35%',
+                                    sm: '30%',
+                                    md: '25%',
+                                    lg: '20%',
+                                    xl: '17.5%',
+                                }}
+                                sx={{
+                                    height: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-end',
+                                    paddingRight: '1vw',
+                                }}
+                            >
+                                <IconButton
+                                    buttonName={'Send'}
+                                    Icon={() => <SendIcon />}
+                                    buttonBackground={'primary.main'}
+                                    iconColor={'primary.iconLight'}
+                                    handleSubmit={handleSendMessage}
+                                    width={{
+                                        xs: '100%',
+                                        sm: '100%',
+                                        md: '95%',
+                                        lg: '90%',
+                                        xl: '85%',
+                                    }}
+                                />
+                            </Box>
                         </Box>
                     </Box>
                 </Box>
-            </Box>
+            )}
             <SnackBarAlert
                 text={'Copied to clipboard'}
                 isOpen={Boolean(copyMessageClickedData)}
                 closeSnackBar={closeSnackBar}
                 severity={'success'}
             />
+            {/* <TerminalComponent /> */}
         </Box>
     )
 }

@@ -1,9 +1,11 @@
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import Consumer from './pages/Consumer'
 import CreateWebsocketServer from './pages/CreateWebsocketServer'
 import Error from './pages/Error'
 import KafkaServer from './pages/KafkaServer'
 import Layout from './pages/Layout'
+import Producer from './pages/Producer'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import SchemaRegistry from './pages/SchemaRegistry'
@@ -32,6 +34,8 @@ const router = createBrowserRouter([
                 element: <SchemaRegistry />,
                 path: '/schemaRegistry',
             },
+            { element: <Producer />, path: '/producer' },
+            { element: <Consumer />, path: '/consumer' },
         ],
         element: <Layout />,
         errorElement: (

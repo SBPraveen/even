@@ -1,13 +1,22 @@
 /* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { Box, Typography } from '@mui/material'
+import { useController } from 'react-hook-form'
 import { useState } from 'react'
 
-const FolderSelect = () => {
+const FolderSelect = ({ control, name }) => {
+    const { field } = useController({
+        control,
+        defaultValue: '',
+        name,
+    })
     const [path, setPath] = useState('')
 
     const handleChange = async () => {
         const path = await window.ipcRenderer.fileSystemAccess()
         setPath(path)
+        field.onChange(path)
     }
     return (
         <Box

@@ -1,13 +1,13 @@
-const { app, BrowserWindow, ipcMain, clipboard, dialog } = require("electron");
-const url = require("url");
-const path = require("path");
+const { app, BrowserWindow, ipcMain, clipboard, dialog } = require("electron")
+const url = require("url")
+const path = require("path")
 const {
   startServer,
   connectServer,
   sendMessage,
   stopServer,
-} = require("./back-end-app/createWebsocketServer/");
-const windowStateKeeper = require("electron-window-state");
+} = require("./back-end-app/createWebsocketServer/")
+const windowStateKeeper = require("electron-window-state")
 
 const createWindow = (mainWindowState) => {
   const win = new BrowserWindow({
@@ -23,45 +23,75 @@ const createWindow = (mainWindowState) => {
       preload: path.join(__dirname, "preload.js"),
       icon: path.join(__dirname, "assets", "even_icon.png"),
     },
-  });
-  win.webContents.openDevTools();
-  win.setMenuBarVisibility(false);
+  })
+  win.webContents.openDevTools()
+  win.setMenuBarVisibility(false)
   const startUrl = url.format({
     pathname: path.join(__dirname, "./front-end-app/build/index.html"),
     protocol: "file",
-  });
-  win.loadURL(startUrl);
-  ipcMain.on("startWebSocketServer", (event, data) => startServer(data, win));
+  })
+  win.loadURL(startUrl)
+  ipcMain.handle("startWebSocketServer", async (event, data) => {
+    return startServer(data, win)
+  })
   ipcMain.on("connectWebSocketServer", (event, data) =>
     connectServer(data, win)
-  );
-  ipcMain.on("stopServer", (event) => stopServer());
-  ipcMain.on("wssSendMsg", (event, data) => sendMessage(data));
-  ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data));
+  )
+  ipcMain.on("stopServer", (event) => stopServer())
+  ipcMain.on("wssSendMsg", (event, data) => sendMessage(data))
+  ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data))
   ipcMain.handle("fileSystemAccess", async () => {
     const result = await dialog.showOpenDialog({
       properties: ["openDirectory"],
-    });
-    return result.filePaths;
-  });
-  return win;
-};
+    })
+    return result.filePaths
+  })
+  ipcMain.handle("getTitle", async () => {
+    return win.getTitle()
+  })
+  ipcMain.handle("kafkaProducer", async () => {
+    const newWin = new BrowserWindow({
+      title: "producer",
+      x: mainWindowState.x,
+      y: mainWindowState.y,
+      width: mainWindowState.width,
+      height: mainWindowState.height,
+      webPreferences: {
+        contextIsolation: true,
+        webSecurity: false,
+        nodeIntegration: true,
+        preload: path.join(__dirname, "preload.js"),
+        icon: path.join(__dirname, "assets", "even_icon.png"),
+      },
+    })
+    newWin.webContents.openDevTools()
+    newWin.setMenuBarVisibility(false)
+    const startUrl = url.format({
+      pathname: path.join(__dirname, "./front-end-app/build/index.html"),
+      protocol: "file",
+    })
+    newWin.loadURL(startUrl)
+    ipcMain.on("kafkaSendMsg", (event, data) => console.log(data))
+    return newWin
+  })
+  return win
+}
 
 app.whenReady().then(() => {
-  let win;
+  let win
   let mainWindowState = windowStateKeeper({
     defaultWidth: 1920,
     defaultHeight: 1080,
-  });
-  win = createWindow(mainWindowState);
+  })
+  win = createWindow(mainWindowState)
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      win = createWindow(mainWindowState);
+      win = createWindow(mainWindowState)
     }
-  });
-  mainWindowState.manage(win);
-});
+  })
+  mainWindowState.manage(win)
+})
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
-});
+  if (process.platform !== "darwin") app.quit()
+})
