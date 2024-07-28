@@ -123,7 +123,10 @@ const Chat = ({
             isSelected: false,
             isSent: true,
         }
-        message.msg = parseJsonSafely(mssgData).data
+        message.msg =
+            typeof mssgData === 'object'
+                ? mssgData
+                : parseJsonSafely(mssgData).data
         message.timeStamp = Date.now()
         msgData.push(message)
         setChatData(msgData)

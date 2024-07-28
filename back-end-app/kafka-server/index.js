@@ -13,7 +13,6 @@ const producerSendMessage = (data, topicName) => {
     const run = async () => {
       // Connect the producer
       await producer.connect();
-
       // Send a message to the topic
       await producer.send({
         topic: "test-topic", // Replace with your topic
@@ -26,7 +25,7 @@ const producerSendMessage = (data, topicName) => {
 
     run().catch(console.error);
   } catch (error) {
-    console.log("Error while sending message - web socket server", error);
+    console.error("Error while sending message - web socket server", error);
   }
 };
 
@@ -35,8 +34,6 @@ const kafkaReceiveMsg = (homeWindow) => {
     clientId: "my-app",
     brokers: ["localhost:9092"], // Replace with your Kafka broker addresses
   });
-  console.log('hello from consumer');
-
   // Create a consumer instance
   const consumer = kafka.consumer({ groupId: "test-group" }); // Replace with your group ID
 
@@ -55,7 +52,10 @@ const kafkaReceiveMsg = (homeWindow) => {
           offset: message.offset,
           value: message.value.toString(),
         });
-        homeWindow.webContents.send("kafkaReceiveMsg", message.value.toString());
+        homeWindow.webContents.send(
+          "kafkaReceiveMsg",
+          JSON.parse(message.value.toString())
+        );
       },
     });
   };

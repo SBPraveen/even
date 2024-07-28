@@ -41,6 +41,7 @@ const createWindow = (mainWindowState) => {
   ipcMain.on("stopServer", (event) => stopServer())
   ipcMain.on("wssSendMsg", (event, data) => sendMessage(data))
   ipcMain.on("kafkaSendMsg", (event, data) => producerSendMessage(data))
+  ipcMain.on("kafkaConsumerStarter", (event) => kafkaReceiveMsg(win))
   ipcMain.on("copyToClipBoard", (event, data) => clipboard.writeText(data))
   ipcMain.handle("fileSystemAccess", async () => {
     const result = await dialog.showOpenDialog({
@@ -73,7 +74,6 @@ const createWindow = (mainWindowState) => {
       protocol: "file",
     })
     newWin.loadURL(startUrl)
-    ipcMain.on("kafkaSendMsg", (event, data) => console.log(data,'hi this is me'))
     return newWin
   })
   
@@ -104,14 +104,13 @@ const createWindow = (mainWindowState) => {
   return win
 }
 
-app.whenReady().then(async () => {
+app.whenReady().then(() => {
   let win
   let mainWindowState = windowStateKeeper({
     defaultWidth: 1920,
     defaultHeight: 1080,
   })
   win = createWindow(mainWindowState)
-  kafkaReceiveMsg(win)
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       win = createWindow(mainWindowState)

@@ -20,4 +20,5 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
   kafkaSendMsg: (msg)=>ipcRenderer.send("kafkaSendMsg",msg),
   kafkaReceiveMsg: (callback) =>
     ipcRenderer.on("kafkaReceiveMsg", (_event, value) => callback(value)),
+  kafkaConsumerStarter: ()=>ipcRenderer.send("kafkaConsumerStarter"),
 });

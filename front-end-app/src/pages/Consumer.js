@@ -1,4 +1,6 @@
+/* eslint-disable max-lines-per-function */
 import { Box, Stack } from '@mui/material'
+import { useEffect, useState } from 'react'
 import Chat from '../components/Chat'
 import CloseIcon from '@mui/icons-material/Close'
 import OnlyIconButton from '../components/buttons/OnlyIconButton'
@@ -6,7 +8,6 @@ import ReactJson from '@microlink/react-json-view'
 import SettingsIcon from '@mui/icons-material/Settings'
 import SnackBarAlert from '../components/SnackBarAlert'
 import styles from '../styles/sub-pages/WebSocketServerStarted'
-import { useState } from 'react'
 const Consumer = () => {
     const [jsonViewerData, setJsonViewerData] = useState(false)
     const [consumedMessages, setConsumedMessages] = useState([])
@@ -15,6 +16,9 @@ const Consumer = () => {
         message: '',
         severity: '',
     })
+    useEffect(() => {
+        window.ipcRenderer.kafkaConsumerStarter()
+    }, [])
     const onMessageClick = (message) => {
         if (typeof message.msg === 'object') {
             if (jsonViewerData === message.msg) {

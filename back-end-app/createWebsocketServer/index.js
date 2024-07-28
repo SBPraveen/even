@@ -10,7 +10,6 @@ const startServer = (data, homeWindow) => {
     const wss = new WebSocketServer({ port: data.port });
 
     wss.on("connection", function connection(ws) {
-      console.log("websocket Creation successful");
       connectionId += 1;
       const connectionKey = `connection${connectionId}`;
       const connectionDetails = { frontendWs: ws };
@@ -35,7 +34,6 @@ const startServer = (data, homeWindow) => {
         connectionDetails.backendWs = backendWs;
 
         ws.on("message", function message(msg) {
-          console.log("received from frontend: %s", msg);
           if (backendWs.readyState === WebSocket.OPEN) {
             backendWs.send(msg);
           }
@@ -47,7 +45,6 @@ const startServer = (data, homeWindow) => {
         });
 
         backendWs.on("message", (backendMsg) => {
-          console.log("received from backend: %s", backendMsg);
           if (ws.readyState === WebSocket.OPEN) {
             ws.send(backendMsg.toString());
           }
@@ -55,7 +52,6 @@ const startServer = (data, homeWindow) => {
         });
 
         backendWs.on("close", () => {
-          console.log("Backend connection closed");
           if (ws.readyState === WebSocket.OPEN) {
             ws.close();
           }
@@ -66,7 +62,6 @@ const startServer = (data, homeWindow) => {
         });
       }
       ws.on("message", function message(msg) {
-        console.log("received from client: %s", msg);
         homeWindow.webContents.send("wssReceivedMsg", msg);
       });
 
@@ -89,7 +84,7 @@ const startServer = (data, homeWindow) => {
     });
     return true;
   } catch (error) {
-    console.log("Error while starting local web socket server", error);
+    console.error("Error while starting local web socket server", error);
     return false;
   }
 };
@@ -124,7 +119,7 @@ const sendMessage = (data) => {
       wsMessageConnection.send(JSON.stringify(data.msg));
     }
   } catch (error) {
-    console.log("Error while sending message - web socket server", error);
+    console.error("Error while sending message - web socket server", error);
   }
 };
 

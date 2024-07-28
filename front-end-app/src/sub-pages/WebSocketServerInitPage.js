@@ -98,7 +98,6 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
         }
     }
     const onSubmitWssConnect = (data) => {
-        console.log(data, cookies)
         setIsWssConnectLoading(true)
         setIsServerStarted(true)
         setUrl(data.url)
