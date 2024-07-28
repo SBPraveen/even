@@ -4,25 +4,22 @@
 /* eslint-disable id-length */
 /* eslint-disable sort-keys */
 /* eslint-disable max-lines */
-import { Box, Divider, Grid, Typography } from '@mui/material'
-import BoxCard from '../components/BoxCard'
-import CookieIcon from '@mui/icons-material/Cookie'
-import CustomTextField from '../components/textFields/CustomTextField'
+import { useEffect, useState } from 'react'
+import { Box } from '@mui/material'
 import Form from '../components/form/Form'
-import IconButton from '../components/buttons/IconButton'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import LinkIcon from '@mui/icons-material/Link'
-import OutlinedButton from '../components/buttons/OutlinedButton'
-import SaveIcon from '@mui/icons-material/Save'
+import SideBar from '../components/SideBar'
+import connectToServer from '../data/connectToServer'
 import startServer from '../data/startServer'
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line max-lines-per-function
 const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
-    const { register: registerWssStart, handleSubmit: handleSubmitWssStart } =
-        useForm()
+    const {
+        register: registerWssStart,
+        handleSubmit: handleSubmitWssStart,
+        control: wssStartControl,
+    } = useForm()
     const {
         register: registerWssConnect,
         handleSubmit: handleSubmitWssConnect,
@@ -34,32 +31,63 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
         setValue: setValueAddCookie,
     } = useForm()
 
-    const infoToolTipServerStart =
-        'If cookies are added then they will be sent as a part of the request while establishing connection with the websocket server. NOTE: Cookies are generally used for authentication when connecting to a remote web-socket server'
-
-    const infoTooltipMessage =
-        'If the key is entered then the messages are encrypted & decrypted using the Advanced Encryption Standard (AES) algorithm'
-
     const [cookies, setCookies] = useState([])
-    const [isAddCookie, setIsAddCookie] = useState(false)
-    const [cookieEditData, setCookieEditData] = useState(false)
+    const [cookieEditData, setCookieEditData] = useState('')
+    const [sideBarData, setSideBarData] = useState([])
     const [isWssStartLoading, setIsWssStartLoading] = useState(false)
     const [isWssConnectLoading, setIsWssConnectLoading] = useState(false)
+    const [connectToServerForm, setConnectToServerForm] =
+        useState(connectToServer)
+
+    useEffect(() => {
+        const sideBarData = [
+            {
+                name: 'web-socket-server',
+                data: [
+                    {
+                        name: 'localhost',
+                        url: 'ws://localhost:8080',
+                    },
+                    {
+                        name: 'dev',
+                        url: 'wss://dev.unifo.in',
+                    },
+                    {
+                        name: 'test',
+                        url: 'wss://test.unifo.in',
+                    },
+                    {
+                        name: 'localhost',
+                        url: 'wss://unifo.in',
+                    },
+                ],
+            },
+            {
+                name: 'web-socket-server-v2',
+                data: [
+                    {
+                        name: 'localhost',
+                        url: 'ws://localhost:8080',
+                    },
+                    {
+                        name: 'dev',
+                        url: 'wss://dev.unifo.in',
+                    },
+                    {
+                        name: 'test',
+                        url: 'wss://test.unifo.in',
+                    },
+                    {
+                        name: 'localhost',
+                        url: 'wss://unifo.in',
+                    },
+                ],
+            },
+        ]
+        setSideBarData(sideBarData)
+    }, [])
 
     const onSubmitWssStart = (data) => {
-        console.log(
-            '******************************************************************************',
-        )
-        console.log(
-            '******************************************************************************',
-        )
-        console.log(data)
-        console.log(
-            '******************************************************************************',
-        )
-        console.log(
-            '******************************************************************************',
-        )
         setIsWssStartLoading(true)
         setIsServerStarted(true)
         setPort(data.port)
@@ -74,14 +102,41 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
         window.ipcRenderer.send('connectToServer', serverData)
     }
     const onSubmitAddCookie = (data) => {
-        setCookies([...cookies, { ...data, cookieId: uuidv4() }])
+        const newCookie = { ...data, cookieId: uuidv4() }
+        setCookies([...cookies, newCookie])
+        const tempData = JSON.parse(JSON.stringify(connectToServerForm))
+        tempData.body = tempData.body.map((section) => {
+            if (section.name === 'Cookies') {
+                section.fields = section.fields.map((field) => {
+                    if (field.buttonName === 'Add cookie') {
+                        field.data = [...field.data, newCookie]
+                    } else if (
+                        field.fieldName === 'cookieName' ||
+                        field.fieldName === 'cookieValue'
+                    ) {
+                        field.shouldNotInitDisplay = true
+                    }
+                    return field
+                })
+            }
+            return section
+        })
+        tempData.footer = tempData.footer.map((button) => {
+            if (button.name === 'Connect') {
+                button.shouldNotInitDisplay = false
+            } else if (
+                button.name === 'Add cookie' ||
+                button.name === 'Cancel'
+            ) {
+                button.shouldNotInitDisplay = true
+            }
+            return button
+        })
+        setConnectToServerForm(tempData)
         resetAddCookie({
             cookieName: '',
-            cookieDomain: '',
             cookieValue: '',
         })
-        setIsAddCookie(false)
-        console.log(data)
     }
     const onSaveEditCookie = (data) => {
         const editedCookieData = {
@@ -93,49 +148,211 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
         const tempCookie = cookies.filter(
             (cookie) => cookie.cookieId !== editedCookieData.cookieId,
         )
-        setCookies([...tempCookie, editedCookieData])
-        setIsAddCookie(false)
-        setCookieEditData(false)
+        const updatedCookies = [...tempCookie, editedCookieData]
+        setCookies(updatedCookies)
+        const tempData = JSON.parse(JSON.stringify(connectToServerForm))
+        tempData.body = tempData.body.map((section) => {
+            if (section.name === 'Cookies') {
+                section.fields = section.fields.map((field) => {
+                    if (field.buttonName === 'Add cookie') {
+                        field.data = updatedCookies
+                    } else if (
+                        field.fieldName === 'cookieName' ||
+                        field.fieldName === 'cookieValue'
+                    ) {
+                        field.shouldNotInitDisplay = true
+                    }
+                    return field
+                })
+            }
+            return section
+        })
+        tempData.footer = tempData.footer.map((button) => {
+            if (button.name === 'Connect') {
+                button.shouldNotInitDisplay = false
+            } else if (
+                button.name === 'Save Cookie' ||
+                button.name === 'Cancel Edit'
+            ) {
+                button.shouldNotInitDisplay = true
+            }
+            return button
+        })
+        setConnectToServerForm(tempData)
         resetAddCookie({
             cookieName: '',
-            cookieDomain: '',
             cookieValue: '',
         })
     }
     const onCancelEditCookie = () => {
-        setIsAddCookie(false)
-        setCookieEditData(false)
+        const tempForm = JSON.parse(JSON.stringify(connectToServerForm))
+        tempForm.body = tempForm.body.map((section) => {
+            if (section.name === 'Cookies') {
+                section.fields = section.fields.map((field) => {
+                    if (
+                        field.fieldName === 'cookieName' ||
+                        field.fieldName === 'cookieValue'
+                    ) {
+                        field.shouldNotInitDisplay = true
+                    }
+                    return field
+                })
+            }
+            return section
+        })
+        tempForm.footer = tempForm.footer.map((button) => {
+            if (button.name === 'Connect') {
+                button.shouldNotInitDisplay = false
+            } else if (
+                button.name === 'Save Cookie' ||
+                button.name === 'Cancel Edit'
+            ) {
+                button.shouldNotInitDisplay = true
+            }
+            return button
+        })
+        setConnectToServerForm(tempForm)
         resetAddCookie({
             cookieName: '',
-            cookieDomain: '',
             cookieValue: '',
         })
     }
     const onCancelAddCookie = () => {
+        const tempForm = JSON.parse(JSON.stringify(connectToServerForm))
+        tempForm.body = tempForm.body.map((section) => {
+            if (section.name === 'Cookies') {
+                section.fields = section.fields.map((field) => {
+                    if (
+                        field.fieldName === 'cookieName' ||
+                        field.fieldName === 'cookieValue'
+                    ) {
+                        field.shouldNotInitDisplay = true
+                    }
+                    return field
+                })
+            }
+            return section
+        })
+        tempForm.footer = tempForm.footer.map((button) => {
+            if (button.name === 'Connect') {
+                button.shouldNotInitDisplay = false
+            } else if (
+                button.name === 'Add cookie' ||
+                button.name === 'Cancel'
+            ) {
+                button.shouldNotInitDisplay = true
+            }
+            return button
+        })
+        setConnectToServerForm(tempForm)
         resetAddCookie({
             cookieName: '',
-            cookieDomain: '',
             cookieValue: '',
         })
-        setIsAddCookie(false)
     }
     const onCloseCard = (data) => {
         let tempCookie = JSON.parse(JSON.stringify(cookies))
         tempCookie = tempCookie.filter(
             (cookie) => cookie.cookieId !== data.cookieId,
         )
+        const tempData = JSON.parse(JSON.stringify(connectToServerForm))
+        tempData.body = tempData.body.map((section) => {
+            if (section.name === 'Cookies') {
+                section.fields = section.fields.map((field) => {
+                    if (field.buttonName === 'Add cookie') {
+                        field.data = tempCookie
+                    }
+                    return field
+                })
+            }
+            return section
+        })
+        setConnectToServerForm(tempData)
         setCookies(tempCookie)
     }
-    const onCardClick = (data) => {
-        setValueAddCookie('cookieName', data.cookieName)
-        setValueAddCookie('cookieDomain', data.cookieDomain)
-        setValueAddCookie('cookieValue', data.cookieValue)
+    const onCookieCardClick = (data) => {
         setCookieEditData(data)
-        setIsAddCookie(true)
+        setValueAddCookie('cookieName', data.cookieName)
+        setValueAddCookie('cookieValue', data.cookieValue)
+        const tempForm = JSON.parse(JSON.stringify(connectToServerForm))
+        tempForm.body = tempForm.body.map((section) => {
+            if (section.name === 'Cookies') {
+                section.fields = section.fields.map((field) => {
+                    if (
+                        field.fieldName === 'cookieName' ||
+                        field.fieldName === 'cookieValue'
+                    ) {
+                        field.shouldNotInitDisplay = false
+                    }
+                    return field
+                })
+            }
+            return section
+        })
+        tempForm.footer = tempForm.footer.map((button) => {
+            if (button.name === 'Connect') {
+                button.shouldNotInitDisplay = true
+            } else if (
+                button.name === 'Save Cookie' ||
+                button.name === 'Cancel Edit'
+            ) {
+                button.shouldNotInitDisplay = false
+            }
+            return button
+        })
+        setConnectToServerForm(tempForm)
     }
 
     const onAddCookie = () => {
-        setIsAddCookie(true)
+        const tempForm = JSON.parse(JSON.stringify(connectToServerForm))
+        tempForm.body = tempForm.body.map((section) => {
+            if (section.name === 'Cookies') {
+                section.fields = section.fields.map((field) => {
+                    if (
+                        field.fieldName === 'cookieName' ||
+                        field.fieldName === 'cookieValue'
+                    ) {
+                        field.shouldNotInitDisplay = false
+                    }
+                    return field
+                })
+            }
+            return section
+        })
+        tempForm.footer = tempForm.footer.map((button) => {
+            if (button.name === 'Connect') {
+                button.shouldNotInitDisplay = true
+            } else if (
+                button.name === 'Add cookie' ||
+                button.name === 'Cancel'
+            ) {
+                button.shouldNotInitDisplay = false
+            }
+            return button
+        })
+        setConnectToServerForm(tempForm)
+    }
+
+    const connectToServerHandlers = {
+        onAddCookie,
+        onCookieCardClick,
+        onCloseCard,
+        handleSubmitWssConnect,
+        onSubmitWssConnect,
+        registerWssConnect,
+        registerAddCookie,
+        handleSubmitAddCookie,
+        onSubmitAddCookie,
+        onSaveEditCookie,
+        onCancelEditCookie,
+        onCancelAddCookie,
+    }
+
+    const serverStartHandlers = {
+        handleSubmitWssStart,
+        onSubmitWssStart,
+        registerWssStart,
+        wssStartControl,
     }
 
     return (
@@ -144,322 +361,69 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
                 width: '100%',
                 height: '100%',
                 display: 'flex',
+                alignItems: 'center',
             }}
         >
             <Box
                 sx={{
-                    width: '25%',
-                    height: '100%',
-                    background: 'blue',
+                    width: '32%',
+                    height: '95%',
+                    borderRadius: '23px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
                 }}
-            ></Box>
+            >
+                <Box
+                    sx={{
+                        width: '75%',
+                        height: '100%',
+                        bgcolor: 'primary.box',
+                        borderRadius: '23px',
+                    }}
+                >
+                    <SideBar data={sideBarData} />
+                </Box>
+            </Box>
             <Box
                 sx={{
-                    width: '75%',
+                    width: '65%',
                     height: '100%',
-                    background: 'red',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'space-around',
                 }}
             >
-                <Box sx={{ width: '55%', height: '45%', background: 'green' }}>
+                <Box
+                    sx={{
+                        width: '75%',
+                        height: '45%',
+                        bgcolor: 'primary.box',
+                        borderRadius: '23px',
+                    }}
+                >
                     <Form
-                        data={startServer()}
-                        handleSubmit={handleSubmitWssStart}
-                        onSubmit={onSubmitWssStart}
-                        isLoading={isWssStartLoading}
-                        register={registerWssStart}
-                    />
-                </Box>
-                <Box
-                    sx={{ width: '75%', height: '45%', background: 'yellow' }}
-                ></Box>
-            </Box>
-            {/* <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    height: '27.5%',
-                    justifyContent: 'space-around',
-                }}
-            >
-                <Typography variant='h4' sx={{ color: 'text.backgroundMatch' }}>
-                    Start a local server
-                </Typography>
-                <Box
-                    sx={{
-                        width: '47%',
-                        height: '51%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexDirection: 'column',
-                    }}
-                >
-                    <Box
-                        sx={{
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <CustomTextField
-                            placeholder={'Port'}
-                            size={'small'}
-                            fieldName={'port'}
-                            register={registerWssStart}
-                        />
-                        <CustomTextField
-                            placeholder={'Encryption/Decryption Key'}
-                            icon={InfoOutlinedIcon}
-                            size={'medium'}
-                            tooltip={infoTooltipMessage}
-                            isEndAdornment={true}
-                            fieldName={'enDeKey'}
-                            register={registerWssStart}
-                        />
-                    </Box>
-                    <IconButton
-                        buttonName={'Start'}
-                        Icon={() => <FlightTakeoffIcon />}
-                        buttonBackground={'success.main'}
-                        iconColor={'success.light'}
-                        handleSubmit={handleSubmitWssStart}
-                        onSubmit={onSubmitWssStart}
+                        data={startServer}
+                        handlers={serverStartHandlers}
                         isLoading={isWssStartLoading}
                     />
                 </Box>
+                <Box
+                    sx={{
+                        width: '75%',
+                        height: '45%',
+                        bgcolor: 'primary.box',
+                        borderRadius: '23px',
+                    }}
+                >
+                    <Form
+                        data={connectToServerForm}
+                        isLoading={isWssConnectLoading}
+                        handlers={connectToServerHandlers}
+                    />
+                </Box>
             </Box>
-            <Box
-                sx={{
-                    height: '73.5%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                }}
-            >
-                <Box
-                    sx={{
-                        height: '5%',
-                        width: '47%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Divider style={{ width: '100%' }} />
-                </Box>
-                <Typography variant='h4' sx={{ color: 'text.backgroundMatch' }}>
-                    Connect to a local or remote server
-                </Typography>
-                <Box
-                    sx={{
-                        width: '47%',
-                        height: '80%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                        flexDirection: 'column',
-                    }}
-                >
-                    <Grid container spacing={4}>
-                        <Grid item xs={6}>
-                            <CustomTextField
-                                placeholder={'Web-socket server URL'}
-                                size={'large'}
-                                fieldName={'url'}
-                                register={registerWssConnect}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <CustomTextField
-                                placeholder={'Encryption/Decryption Key'}
-                                icon={InfoOutlinedIcon}
-                                size={'large'}
-                                tooltip={infoTooltipMessage}
-                                isEndAdornment={true}
-                                fieldName={'enDeKey'}
-                                register={registerWssConnect}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <BoxCard
-                                cardData={cookies}
-                                buttonName={'Add cookie'}
-                                infoToolTipMessage={infoToolTipServerStart}
-                                cardDataId={'cookieId'}
-                                onClickButton={onAddCookie}
-                                onCloseCard={onCloseCard}
-                                onCardClick={onCardClick}
-                                dataKey={'cookieName'}
-                            />
-                        </Grid>
-                        {!isAddCookie && (
-                            <Grid item xs={12}>
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <IconButton
-                                        buttonName={'Connect'}
-                                        Icon={() => <LinkIcon />}
-                                        buttonBackground={'success.main'}
-                                        iconColor={'success.light'}
-                                        handleSubmit={handleSubmitWssConnect}
-                                        onSubmit={onSubmitWssConnect}
-                                        isLoading={isWssConnectLoading}
-                                    />
-                                </Box>
-                            </Grid>
-                        )}
-                        {isAddCookie && (
-                            <Grid item xs={4}>
-                                <CustomTextField
-                                    placeholder={'Cookie name'}
-                                    size={'large'}
-                                    fieldName={'cookieName'}
-                                    register={registerAddCookie}
-                                />
-                            </Grid>
-                        )}
-                        {isAddCookie && (
-                            <Grid item xs={8}>
-                                <CustomTextField
-                                    placeholder={'Cookie domain'}
-                                    size={'large'}
-                                    fieldName={'cookieDomain'}
-                                    register={registerAddCookie}
-                                />
-                            </Grid>
-                        )}
-                        {isAddCookie && (
-                            <Grid item xs={12}>
-                                <CustomTextField
-                                    placeholder={'Cookie value'}
-                                    size={'large'}
-                                    fieldName={'cookieValue'}
-                                    register={registerAddCookie}
-                                />
-                            </Grid>
-                        )}
-                        {!cookieEditData && isAddCookie && (
-                            <Grid item xs={12}>
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        height: '4vh',
-                                        minHeight: '20px',
-                                        maxHeight: '40px',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: {
-                                                xs: '100%',
-                                                sm: '100%',
-                                                md: '75%',
-                                                lg: '65%',
-                                                xl: '50%',
-                                            },
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            height: '100%',
-                                        }}
-                                    >
-                                        <OutlinedButton
-                                            color={'text.disabled'}
-                                            buttonName={'Cancel'}
-                                            sx={{ marginRight: '2vw' }}
-                                            onClick={onCancelAddCookie}
-                                        />
-                                        <IconButton
-                                            buttonName={'Add cookie'}
-                                            Icon={() => <CookieIcon />}
-                                            buttonBackground={'primary.main'}
-                                            iconColor={'primary.light'}
-                                            handleSubmit={handleSubmitAddCookie}
-                                            onSubmit={onSubmitAddCookie}
-                                            width={{
-                                                xs: '50%',
-                                                sm: '50%',
-                                                md: '50%',
-                                                lg: '45%',
-                                                xl: '40%',
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
-                            </Grid>
-                        )}
-                        {cookieEditData && isAddCookie && (
-                            <Grid item xs={12}>
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        height: '4vh',
-                                        minHeight: '20px',
-                                        maxHeight: '40px',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: {
-                                                xs: '100%',
-                                                sm: '100%',
-                                                md: '75%',
-                                                lg: '65%',
-                                                xl: '50%',
-                                            },
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            height: '100%',
-                                        }}
-                                    >
-                                        <OutlinedButton
-                                            color={'text.disabled'}
-                                            buttonName={'Cancel'}
-                                            sx={{ marginRight: '2vw' }}
-                                            onClick={onCancelEditCookie}
-                                        />
-                                        <IconButton
-                                            buttonName={'Save'}
-                                            Icon={() => <SaveIcon />}
-                                            buttonBackground={'primary.main'}
-                                            iconColor={'primary.light'}
-                                            handleSubmit={handleSubmitAddCookie}
-                                            onSubmit={onSaveEditCookie}
-                                            width={{
-                                                xs: '50%',
-                                                sm: '50%',
-                                                md: '50%',
-                                                lg: '45%',
-                                                xl: '40%',
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
-                            </Grid>
-                        )}
-                    </Grid>
-                </Box>
-            </Box> */}
         </Box>
     )
 }

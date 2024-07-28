@@ -1,6 +1,5 @@
-import { Box, Tooltip } from '@mui/material'
+import { Box } from '@mui/material'
 import BoxCardChild from './BoxCardChild'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import PropTypes from 'prop-types'
 import TextButton from './buttons/TextButton'
 import styles from '../styles/components/BoxCard'
@@ -10,7 +9,6 @@ const BoxCard = ({
     cardData,
     cardDataId,
     dataKey,
-    infoToolTipMessage,
     onCardClick,
     onCloseCard,
     onClickButton,
@@ -40,9 +38,6 @@ const BoxCard = ({
                         onClick={onClickButton}
                     />
                 </Box>
-                <Tooltip title={infoToolTipMessage}>
-                    <InfoOutlinedIcon sx={styles.buttonSectionInfo} />
-                </Tooltip>
             </Box>
         </Box>
     )
@@ -53,7 +48,6 @@ BoxCard.propTypes = {
     cardData: PropTypes.arrayOf(PropTypes.object).isRequired,
     cardDataId: PropTypes.string.isRequired,
     dataKey: PropTypes.string.isRequired,
-    infoToolTipMessage: PropTypes.string.isRequired,
     onCardClick: PropTypes.func.isRequired,
     onClickButton: PropTypes.func.isRequired,
     onCloseCard: PropTypes.func.isRequired,
