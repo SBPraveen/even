@@ -3,11 +3,11 @@ const styles = {
         padding: 0,
         '&:hover': {
             backgroundColor: 'transparent',
-            '& .MuiSvgIcon-root': {
+            '& .MuiSvgIconRoot': {
                 color: onHoverColor,
             },
         },
-        '& .MuiSvgIcon-root': {
+        '& .MuiSvgIconRoot': {
             color,
         },
     }),
