@@ -29,6 +29,7 @@ const WebSocketInitPage = ({
     const {
         register: registerWssConnect,
         handleSubmit: handleSubmitWssConnect,
+        setValue: setValueWssConnect,
     } = useForm()
     const {
         register: registerAddCookie,
@@ -93,7 +94,22 @@ const WebSocketInitPage = ({
         setSideBarData(sideBarData)
     }, [])
 
+<<<<<<< HEAD
     const onSubmitWssStart = async (data) => {
+=======
+    const handleSideBarOpen = (folder) => {
+        let tempData = JSON.parse(JSON.stringify(sideBarData))
+        tempData = tempData.map((data) => {
+            if (data.name === folder.name) {
+                data.isOpen = !data.isOpen
+            }
+            return data
+        })
+        setSideBarData(tempData)
+    }
+
+    const onSubmitWssStart = (data) => {
+>>>>>>> main
         setIsWssStartLoading(true)
         setIsServerStarted(true)
         setPort(data.port)
@@ -404,7 +420,11 @@ const WebSocketInitPage = ({
                         borderRadius: '23px',
                     }}
                 >
-                    <SideBar data={sideBarData} />
+                    <SideBar
+                        data={sideBarData}
+                        handleSideBarOpen={handleSideBarOpen}
+                        setValueWssConnect={setValueWssConnect}
+                    />
                 </Box>
             </Box>
             <Box
