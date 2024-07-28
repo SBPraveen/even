@@ -12,6 +12,8 @@ const CreateWebsocketServer = () => {
     const [isServerStarted, setIsServerStarted] = useState(false)
     const [port, setPort] = useState()
     const [url, setUrl] = useState()
+    const [encryptionData, setEncryptionData] = useState(false)
+    const [schemas, setSchemas] = useState([])
 
     const onCreateNewTab = () => {
         const newTabData = {
@@ -47,6 +49,8 @@ const CreateWebsocketServer = () => {
                         port={port}
                         url={url}
                         setIsServerStarted={setIsServerStarted}
+                        encryptionData={encryptionData}
+                        schemas={schemas}
                     />
                 </Box>
             ) : (
@@ -55,6 +59,8 @@ const CreateWebsocketServer = () => {
                         setIsServerStarted={setIsServerStarted}
                         setPort={setPort}
                         setUrl={setUrl}
+                        setEncryptionData={setEncryptionData}
+                        setSchemas={setSchemas}
                     />
                 </Box>
             )}

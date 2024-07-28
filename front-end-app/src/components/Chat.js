@@ -21,7 +21,7 @@ import SendIcon from '@mui/icons-material/Send'
 import BoxCardChild from './BoxCardChild'
 import { useTheme } from '@mui/material/styles'
 import { v4 as uuid } from 'uuid'
-import { timeStampFormatter } from '../utils'
+import { decryption, encryption, timeStampFormatter } from '../utils'
 // import TerminalComponent from './Terminal'
 
 const Chat = ({
@@ -34,20 +34,14 @@ const Chat = ({
     noOfSelectedMessages,
     isConsumer,
     isProducer,
+    encryptionData,
+    schemas,
 }) => {
     const theme = useTheme()
     const [copyMessageClickedData, setCopyMessageClickedData] = useState(false)
     const [isMssgJsonEditor, setIsMssgJsonEditor] = useState(false)
     const [mssgData, setMssgData] = useState('')
-    const [schemas, setSchemas] = useState([
-        { name: 'remote digital signature', id: '1122' },
-        { name: 'remote digital signature', id: '1177' },
-        { name: 'job lock', id: '11522377' },
-        { name: 'digitization', id: '1135477' },
-        { name: 'transaction', id: '1114577' },
-        { name: 'masters', id: '117714' },
-        { name: 'checklist', id: '1172457' },
-    ])
+    const [selectedSchema, setSelectedSchema] = useState(false)
 
     const fixJsonString = (str) => {
         // Add quotes around keys
@@ -71,17 +65,22 @@ const Chat = ({
     }
 
     useEffect(() => {
-        const onMessageReceived = (value) => {
+        const onMessageReceived = (value, connection) => {
             const msgData = [...data]
             const message = {
                 msg: '',
                 timeStamp: Date.now(),
                 msgId: uuid(),
-                isSent: false,
+                isSent: !(connection === 'server'),
             }
-            message.msg = parseJsonSafely(
-                String.fromCharCode.apply(null, value),
-            ).data
+            let receivedMessage = String.fromCharCode.apply(null, value)
+            if (encryptionData && encryptionData.encryptionKey) {
+                receivedMessage = decryption(receivedMessage, encryptionData)
+            }
+            message.msg =
+                typeof receivedMessage === 'object'
+                    ? receivedMessage
+                    : parseJsonSafely(receivedMessage).data
             msgData.push(message)
             setChatData(msgData)
         }
@@ -92,9 +91,15 @@ const Chat = ({
 
     const onCopyToClipboard = (message) => {
         setCopyMessageClickedData(message)
+        window.ipcRenderer.copyToClipBoard(message)
     }
     const handleMssgJsonEditor = () => {
         setIsMssgJsonEditor(true)
+    }
+
+    const handleSchemaSelection = (schema) => {
+        setSelectedSchema(schema.id)
+        setMssgData(schema.payload)
     }
 
     const closeSnackBar = () => {
@@ -107,20 +112,27 @@ const Chat = ({
             msg: '',
             timeStamp: Date.now(),
             msgId: uuid(),
-            isSelected: false,
             isSent: true,
         }
-        message.msg = parseJsonSafely(mssgData).data
+        let sendMsg = mssgData
+        if (encryptionData && encryptionData.encryptionKey) {
+            sendMsg = encryption(JSON.stringify(sendMsg), encryptionData)
+        }
+        message.msg = sendMsg
         message.timeStamp = Date.now()
+        if (isProducer) {
+            window.ipcRenderer.kafkaSendMsg(message)
+        } else {
+            window.ipcRenderer.wssSendMsg(message.msg)
+        }
+        message.msg =
+            typeof mssgData === 'object'
+                ? mssgData
+                : parseJsonSafely(mssgData).data
         msgData.push(message)
         setChatData(msgData)
         setIsMssgJsonEditor(false)
         setMssgData('')
-        if (isProducer) {
-            window.ipcRenderer.kafkaSendMsg(message)
-        } else {
-            window.ipcRenderer.wssSendMsg(message)
-        }
     }
     return (
         <Box
@@ -344,7 +356,7 @@ const Chat = ({
                 <Box
                     sx={{
                         marginTop: '2%',
-                        height: '20%',
+                        height: selectedSchema ? '50%' : '20%',
                         width: '97%',
                         display: 'flex',
                         alignItems: 'flex-start',
@@ -394,6 +406,7 @@ const Chat = ({
                                         key={schema.id}
                                         data={schema}
                                         dataKey={'name'}
+                                        onCardClick={handleSchemaSelection}
                                     />
                                 ))}
                             </Box>
@@ -427,7 +440,7 @@ const Chat = ({
                         </Box>
                         <Box
                             sx={{
-                                height: '66%',
+                                height: selectedSchema ? '95%' : '66%',
                                 width: '100%',
                                 display: 'flex',
                             }}
@@ -443,7 +456,11 @@ const Chat = ({
                                 }}
                             >
                                 <textarea
-                                    value={mssgData}
+                                    value={
+                                        selectedSchema
+                                            ? JSON.stringify(mssgData)
+                                            : mssgData
+                                    }
                                     onChange={(e) =>
                                         setMssgData(e.target.value)
                                     }
@@ -454,7 +471,9 @@ const Chat = ({
                                         border: 'none',
                                         paddingTop: '0.5%',
                                         paddingBottom: '0.5%',
-                                        overflow: 'hidden',
+                                        overflow: selectedSchema
+                                            ? 'auto'
+                                            : 'hidden',
                                         resize: 'none',
                                     }}
                                     rows='4'

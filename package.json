@@ -15,9 +15,14 @@
     "electron": "^31.3.0"
   },
   "dependencies": {
+    "@asyncapi/converter": "^1.4.21",
     "electron-window-state": "^5.0.3",
+    "fs": "^0.0.1-security",
+    "json-schema-faker": "^0.5.6",
     "prop-types": "^15.8.1",
+    "sqlite3": "^5.1.7",
     "tree-kill": "^1.2.2",
-    "ws": "^8.17.0"
+    "ws": "^8.17.0",
+    "yaml": "^2.4.5"
   }
 }

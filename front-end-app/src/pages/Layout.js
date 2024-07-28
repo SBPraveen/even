@@ -10,17 +10,16 @@ import { ReactComponent as WebsocketTestEngine } from '../icons/websocket_test_e
 import styles from '../styles/pages/Layout'
 
 const Layout = ({ children }) => {
-    const [url, setUrl] = useState('/consumer')
+    const [url, setUrl] = useState('/webSocketServer')
     useEffect(() => {
         window.ipcRenderer.getTitle().then((title) => {
             if (title === 'producer') {
                 setUrl('/producer')
             } else if (title === 'consumer') {
                 setUrl('/consumer')
+            } else {
+                setUrl('/webSocketServer')
             }
-            // else {
-            //     setUrl('/webSocketServer')
-            // }
         })
     }, [])
     return (

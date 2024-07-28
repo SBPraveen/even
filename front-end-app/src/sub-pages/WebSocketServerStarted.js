@@ -15,7 +15,13 @@ import SnackBarAlert from '../components/SnackBarAlert'
 import styles from '../styles/sub-pages/WebSocketServerStarted'
 import { timeStampFormatter } from '../utils'
 
-const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
+const WebSocketServerStarted = ({
+    port,
+    url,
+    setIsServerStarted,
+    encryptionData,
+    schemas,
+}) => {
     const [isServerStopLoading, setIsServerStopLoading] = useState(false)
     const [jsonViewerData, setJsonViewerData] = useState(false)
     const [isLatencyInspect, setIsLatencyInspect] = useState(false)
@@ -161,6 +167,8 @@ const WebSocketServerStarted = ({ port, url, setIsServerStarted }) => {
                             onMessageClick={onMessageClick}
                             setChatData={setChatData}
                             noOfSelectedMessages={noOfSelectedMessages}
+                            encryptionData={encryptionData}
+                            schemas={schemas}
                         />
                     </Box>
                 </Box>
