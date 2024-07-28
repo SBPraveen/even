@@ -45,58 +45,27 @@ const WebSocketInitPage = ({
     const [isWssConnectLoading, setIsWssConnectLoading] = useState(false)
     const [connectToServerForm, setConnectToServerForm] =
         useState(connectToServer)
+    const [selectedSchemaRepository, setSelectedSchemaRepository] = useState('')
 
     useEffect(() => {
-        const sideBarData = [
-            {
-                name: 'web-socket-server',
-                data: [
-                    {
-                        name: 'localhost',
-                        url: 'ws://localhost:8080',
-                    },
-                    {
-                        name: 'dev',
-                        url: 'wss://dev.unifo.in',
-                    },
-                    {
-                        name: 'test',
-                        url: 'wss://test.unifo.in',
-                    },
-                    {
-                        name: 'localhost',
-                        url: 'wss://unifo.in',
-                    },
-                ],
-            },
-            {
-                name: 'web-socket-server-v2',
-                data: [
-                    {
-                        name: 'localhost',
-                        url: 'ws://localhost:8080',
-                    },
-                    {
-                        name: 'dev',
-                        url: 'wss://dev.unifo.in',
-                    },
-                    {
-                        name: 'test',
-                        url: 'wss://test.unifo.in',
-                    },
-                    {
-                        name: 'localhost',
-                        url: 'wss://unifo.in',
-                    },
-                ],
-            },
-        ]
-        setSideBarData(sideBarData)
+        window.ipcRenderer.getAllDocuments().then((documents) => {
+            const sideBarData = documents.map((document) => {
+                const newDocument = {
+                    data: [],
+                    name: document.apiName,
+                }
+                document.urls.forEach((url) => {
+                    newDocument.data.push({
+                        name: `${document.apiName}:${url}`,
+                        url,
+                    })
+                })
+                return newDocument
+            })
+            setSideBarData(sideBarData)
+        })
     }, [])
 
-<<<<<<< HEAD
-    const onSubmitWssStart = async (data) => {
-=======
     const handleSideBarOpen = (folder) => {
         let tempData = JSON.parse(JSON.stringify(sideBarData))
         tempData = tempData.map((data) => {
@@ -105,11 +74,12 @@ const WebSocketInitPage = ({
             }
             return data
         })
+        setSelectedSchemaRepository(folder.name)
         setSideBarData(tempData)
     }
 
-    const onSubmitWssStart = (data) => {
->>>>>>> main
+    const onSubmitWssStart = async (data) => {
+        console.log(data)
         setIsWssStartLoading(true)
         setIsServerStarted(true)
         setPort(data.port)
@@ -117,8 +87,13 @@ const WebSocketInitPage = ({
             encryptionKey: data.enDeKey,
             encryptionAlg: data.enDeAlgorithm,
         })
-        const schemas = await window.ipcRenderer.getSchemaValues('abc')
-        setSchemas(schemas.examples ?? [])
+        let schemas = []
+        if (selectedSchemaRepository) {
+            schemas = await window.ipcRenderer.getSchemaValues(
+                selectedSchemaRepository,
+            )
+        }
+        setSchemas(schemas?.examples ?? [])
         const serverStatus = await window.ipcRenderer.startWebSocketServer(data)
         if (!serverStatus) {
             setIsWssStartLoading(false)

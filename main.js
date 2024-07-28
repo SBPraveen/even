@@ -66,6 +66,10 @@ const createWindow = (mainWindowState) => {
         const data = await getDocument(key)
         return data
     })
+    ipcMain.handle('getAllDocuments', async (event, ...args) => {
+        const data = await getAllDocuments()
+        return data
+    })
     ipcMain.handle('kafkaProducer', async () => {
         const newWin = new BrowserWindow({
             title: 'producer',
