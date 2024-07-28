@@ -6,6 +6,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable sort-imports */
 /* eslint-disable sort-keys */
+/* eslint-disable no-negated-condition */
 /* eslint-disable max-lines-per-function */
 import { Box, Stack, Tooltip, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -73,20 +74,32 @@ const Chat = ({
     useEffect(() => {
         const onMessageReceived = (value) => {
             const msgData = [...data]
-            const message = {
+            let message = {
                 msg: '',
                 timeStamp: Date.now(),
                 msgId: uuid(),
                 isSent: false,
             }
-            message.msg = parseJsonSafely(
-                String.fromCharCode.apply(null, value),
-            ).data
+            if (!isConsumer) {
+                message = {
+                    msg: '',
+                    timeStamp: Date.now(),
+                    msgId: uuid(),
+                    isSent: false,
+                }
+                message.msg = parseJsonSafely(
+                    String.fromCharCode.apply(null, value),
+                ).data
+            } else {
+                message.msg = value
+            }
             msgData.push(message)
             setChatData(msgData)
         }
         if (!isConsumer && !isProducer) {
             window.ipcRenderer.wssReceivedMsg(onMessageReceived)
+        } else if (isConsumer) {
+            window.ipcRenderer.kafkaReceiveMsg(onMessageReceived)
         }
     }, [data, isConsumer, isProducer])
 

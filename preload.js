@@ -18,4 +18,6 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
   fileSystemAccess: () => ipcRenderer.invoke("fileSystemAccess"),
   getTitle: () => ipcRenderer.invoke("getTitle"),
   kafkaSendMsg: (msg)=>ipcRenderer.send("kafkaSendMsg",msg),
+  kafkaReceiveMsg: (callback) =>
+    ipcRenderer.on("kafkaReceiveMsg", (_event, value) => callback(value)),
 });
