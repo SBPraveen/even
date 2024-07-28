@@ -58,6 +58,7 @@ const Producer = () => {
                             onMessageClick={onMessageClick}
                             noOfSelectedMessages={[]}
                             isProducer={true}
+                            schemas={[]}
                         />
                     </Box>
                 </Box>

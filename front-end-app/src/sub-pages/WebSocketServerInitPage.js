@@ -14,7 +14,13 @@ import { useForm } from 'react-hook-form'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line max-lines-per-function
-const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
+const WebSocketInitPage = ({
+    setIsServerStarted,
+    setPort,
+    setUrl,
+    setEncryptionData,
+    setSchemas,
+}) => {
     const {
         register: registerWssStart,
         handleSubmit: handleSubmitWssStart,
@@ -23,6 +29,7 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
     const {
         register: registerWssConnect,
         handleSubmit: handleSubmitWssConnect,
+        setValue: setValueWssConnect,
     } = useForm()
     const {
         register: registerAddCookie,
@@ -38,71 +45,73 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
     const [isWssConnectLoading, setIsWssConnectLoading] = useState(false)
     const [connectToServerForm, setConnectToServerForm] =
         useState(connectToServer)
+    const [selectedSchemaRepository, setSelectedSchemaRepository] = useState('')
 
     useEffect(() => {
-        const sideBarData = [
-            {
-                name: 'web-socket-server',
-                data: [
-                    {
-                        name: 'localhost',
-                        url: 'ws://localhost:8080',
-                    },
-                    {
-                        name: 'dev',
-                        url: 'wss://dev.unifo.in',
-                    },
-                    {
-                        name: 'test',
-                        url: 'wss://test.unifo.in',
-                    },
-                    {
-                        name: 'localhost',
-                        url: 'wss://unifo.in',
-                    },
-                ],
-            },
-            {
-                name: 'web-socket-server-v2',
-                data: [
-                    {
-                        name: 'localhost',
-                        url: 'ws://localhost:8080',
-                    },
-                    {
-                        name: 'dev',
-                        url: 'wss://dev.unifo.in',
-                    },
-                    {
-                        name: 'test',
-                        url: 'wss://test.unifo.in',
-                    },
-                    {
-                        name: 'localhost',
-                        url: 'wss://unifo.in',
-                    },
-                ],
-            },
-        ]
-        setSideBarData(sideBarData)
+        window.ipcRenderer.getAllDocuments().then((documents) => {
+            const sideBarData = documents.map((document) => {
+                const newDocument = {
+                    data: [],
+                    name: document.apiName,
+                }
+                document.urls.forEach((url) => {
+                    newDocument.data.push({
+                        name: `${document.apiName}:${url}`,
+                        url,
+                    })
+                })
+                return newDocument
+            })
+            setSideBarData(sideBarData)
+        })
     }, [])
 
+    const handleSideBarOpen = (folder) => {
+        let tempData = JSON.parse(JSON.stringify(sideBarData))
+        tempData = tempData.map((data) => {
+            if (data.name === folder.name) {
+                data.isOpen = !data.isOpen
+            }
+            return data
+        })
+        setSelectedSchemaRepository(folder.name)
+        setSideBarData(tempData)
+    }
+
     const onSubmitWssStart = async (data) => {
+        console.log(data)
         setIsWssStartLoading(true)
         setIsServerStarted(true)
         setPort(data.port)
+        setEncryptionData({
+            encryptionKey: data.enDeKey,
+            encryptionAlg: data.enDeAlgorithm,
+        })
+        let schemas = []
+        if (selectedSchemaRepository) {
+            schemas = await window.ipcRenderer.getSchemaValues(
+                selectedSchemaRepository,
+            )
+        }
+        setSchemas(schemas?.examples ?? [])
         const serverStatus = await window.ipcRenderer.startWebSocketServer(data)
         if (!serverStatus) {
             setIsWssStartLoading(false)
             setIsServerStarted(false)
         }
     }
-    const onSubmitWssConnect = (data) => {
+    const onSubmitWssConnect = async (data) => {
         setIsWssConnectLoading(true)
         setIsServerStarted(true)
         setUrl(data.url)
         const serverData = { ...data, cookies }
-        window.ipcRenderer.send('connectToServer', serverData)
+        setEncryptionData({
+            encryptionKey: data.enDeKey,
+            encryptionAlg: data.enDeAlgorithm,
+        })
+        const schemas = await window.ipcRenderer.getSchemaValues('abc')
+        setSchemas(schemas.examples ?? [])
+        window.ipcRenderer.connectWebSocketServer(serverData)
     }
     const onSubmitAddCookie = (data) => {
         const newCookie = { ...data, cookieId: uuidv4() }
@@ -385,7 +394,11 @@ const WebSocketInitPage = ({ setIsServerStarted, setPort, setUrl }) => {
                         borderRadius: '23px',
                     }}
                 >
-                    <SideBar data={sideBarData} />
+                    <SideBar
+                        data={sideBarData}
+                        handleSideBarOpen={handleSideBarOpen}
+                        setValueWssConnect={setValueWssConnect}
+                    />
                 </Box>
             </Box>
             <Box

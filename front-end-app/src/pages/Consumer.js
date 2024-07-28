@@ -62,6 +62,7 @@ const Consumer = () => {
                             onMessageClick={onMessageClick}
                             noOfSelectedMessages={[]}
                             isConsumer={true}
+                            schemas={[]}
                         />
                     </Box>
                 </Box>
