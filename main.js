@@ -37,7 +37,7 @@ const createWindow = (mainWindowState) => {
             // devTools: false,
         },
     })
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
     win.setMenuBarVisibility(false)
     const startUrl = url.format({
         pathname: path.join(__dirname, './front-end-app/build/index.html'),
