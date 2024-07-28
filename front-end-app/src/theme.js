@@ -29,7 +29,6 @@ export const theme = createTheme({
                 root: ({ theme }) => ({
                     background: theme.palette.primary.white,
                     borderRadius: '8px',
-                    boxShadow: theme.shadows[2],
                     color: theme.palette.text.backgroundMatchDark,
                     height: '5vh',
                     maxHeight: '50px',
@@ -79,6 +78,7 @@ export const theme = createTheme({
             main: '#EE3124',
         },
         primary: {
+            box: '#FFE5C2',
             chat: '#FEF9F1',
             iconLight: '#FFC062',
             light: '#FFF4E5',

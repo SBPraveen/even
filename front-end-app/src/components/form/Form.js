@@ -1,13 +1,19 @@
-/* eslint-disable id-length */
+/* eslint-disable max-lines */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable sort-keys */
 import { Box, Grid, Tooltip, Typography } from '@mui/material'
+import BoxCard from '../BoxCard'
+import { Controller } from 'react-hook-form'
+import CookieIcon from '@mui/icons-material/Cookie'
 import CustomTextField from '../textFields/CustomTextField'
 import DropDown from '../DropDown'
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff'
 import FolderSelect from '../FolderSelect'
 import IconButton from '../buttons/IconButton'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import LinkIcon from '@mui/icons-material/Link'
+import OutlinedButton from '../buttons/OutlinedButton'
 import PropTypes from 'prop-types'
+import SaveIcon from '@mui/icons-material/Save'
 
 const gridSizeCompute = (sizeText) => {
     let size
@@ -21,7 +27,28 @@ const gridSizeCompute = (sizeText) => {
     return size
 }
 
-const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
+const iconSelector = (iconName) => {
+    let component
+    switch (iconName) {
+        case 'linkIcon':
+            component = <LinkIcon />
+            break
+        case 'cookieIcon':
+            component = <CookieIcon />
+            break
+        case 'saveIcon':
+            component = <SaveIcon />
+            break
+        case 'flightTakeoffIcon':
+            component = <FlightTakeoffIcon />
+            break
+        default:
+            component = ''
+    }
+    return component
+}
+
+const Form = ({ data, isLoading, handlers }) => {
     return (
         <Box
             sx={{
@@ -37,9 +64,8 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
                 sx={{
                     width: '100%',
                     height: '10%',
-                    background: 'pink',
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-end',
                     justifyContent: 'center',
                 }}
             >
@@ -51,7 +77,7 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
                 sx={{
                     width: '100%',
                     height: '73%',
-                    background: 'orange',
+                    maxHeight: '40vh',
                     overflowY: 'auto',
                     marginTop: '1%',
                     marginBottom: '1%',
@@ -79,10 +105,10 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
             >
                 <Grid
                     container
-                    rowSpacing={1}
+                    rowSpacing={1.5}
                     columnSpacing={4}
                     sx={{
-                        width: '100%',
+                        width: '97%',
                         height: '100%',
                     }}
                 >
@@ -94,42 +120,60 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
                                     item
                                     xs={12}
                                     sx={{
-                                        background: 'brown',
-                                        height: '2.5vh',
                                         margin: '0',
-                                        marginTop: '2vh',
+                                        display: 'flex',
+                                        alignItems: 'flex-end',
+                                        '&.MuiGrid-item': {
+                                            paddingTop: '0',
+                                        },
                                     }}
                                 >
                                     <Box
                                         sx={{
                                             display: 'flex',
                                             width: '100%',
-                                            height: '100%',
+                                            height: '3.75vh',
+                                            alignItems: 'flex-end',
                                         }}
                                     >
-                                        <Typography
-                                            variant='body2'
-                                            sx={{ color: 'text.main' }}
-                                        >
-                                            {field.name}
-                                            {field.isRequired && (
-                                                <span style={{ color: 'red' }}>
-                                                    {' '}
-                                                    *
-                                                </span>
-                                            )}
-                                        </Typography>
-                                        {field.description && (
+                                        {field.description ? (
                                             <Tooltip title={field.description}>
-                                                <InfoOutlinedIcon
+                                                <Typography
+                                                    variant='body2'
                                                     sx={{
-                                                        color: 'text.disabled',
-                                                        fontSize: '1rem',
-                                                        cursor: 'pointer',
-                                                        marginLeft: '10px',
+                                                        color: 'text.backgroundMatch',
                                                     }}
-                                                />
+                                                >
+                                                    {field.name}
+                                                    {field.isRequired && (
+                                                        <span
+                                                            style={{
+                                                                color: 'red',
+                                                            }}
+                                                        >
+                                                            {' '}
+                                                            *
+                                                        </span>
+                                                    )}
+                                                </Typography>
                                             </Tooltip>
+                                        ) : (
+                                            <Typography
+                                                variant='body2'
+                                                sx={{
+                                                    color: 'text.backgroundMatch',
+                                                }}
+                                            >
+                                                {field.name}
+                                                {field.isRequired && (
+                                                    <span
+                                                        style={{ color: 'red' }}
+                                                    >
+                                                        {' '}
+                                                        *
+                                                    </span>
+                                                )}
+                                            </Typography>
                                         )}
                                     </Box>
                                 </Grid>
@@ -139,33 +183,99 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
                                             key={field.type + index}
                                             item
                                             xs={gridSizeCompute(field.size)}
-                                            sx={{
-                                                background: 'magenta',
-                                            }}
                                         >
-                                            {field.type === 'textfield' && (
-                                                <CustomTextField
-                                                    placeholder={
-                                                        field.placeholder
-                                                    }
-                                                    fieldName={field.fieldName}
-                                                    register={register}
-                                                />
-                                            )}
-                                            {field.type === 'dropdown' && (
-                                                <DropDown
-                                                    register={register}
-                                                    menu={field.options}
-                                                    fieldName={field.fieldName}
-                                                    placeholder={
-                                                        field.placeholder
-                                                    }
-                                                />
-                                            )}
-                                            {field.type ===
-                                                'folderSelector' && (
-                                                <FolderSelect />
-                                            )}
+                                            {!field.shouldNotInitDisplay &&
+                                                field.type === 'textfield' && (
+                                                    <CustomTextField
+                                                        placeholder={
+                                                            field.placeholder
+                                                        }
+                                                        fieldName={
+                                                            field.fieldName
+                                                        }
+                                                        register={
+                                                            handlers[
+                                                                field.register
+                                                            ]
+                                                        }
+                                                    />
+                                                )}
+                                            {!field.shouldNotInitDisplay &&
+                                                field.type === 'dropdown' && (
+                                                    <DropDown
+                                                        register={
+                                                            handlers[
+                                                                field.register
+                                                            ]
+                                                        }
+                                                        menu={field.options}
+                                                        fieldName={
+                                                            field.fieldName
+                                                        }
+                                                        placeholder={
+                                                            field.placeholder
+                                                        }
+                                                    />
+                                                )}
+                                            {!field.shouldNotInitDisplay &&
+                                                field.type === 'boxCard' && (
+                                                    <BoxCard
+                                                        cardData={field.data}
+                                                        buttonName={
+                                                            field.buttonName
+                                                        }
+                                                        cardDataId={'cookieId'}
+                                                        onClickButton={
+                                                            handlers[
+                                                                field
+                                                                    .onClickButton
+                                                            ]
+                                                        }
+                                                        onCloseCard={
+                                                            handlers[
+                                                                field
+                                                                    .onCloseCard
+                                                            ]
+                                                        }
+                                                        onCardClick={
+                                                            handlers[
+                                                                field
+                                                                    .onCardClick
+                                                            ]
+                                                        }
+                                                        dataKey={'cookieName'}
+                                                    />
+                                                )}
+                                            {!field.shouldNotInitDisplay &&
+                                                field.type ===
+                                                    'folderSelector' && (
+                                                    <Controller
+                                                        control={
+                                                            handlers[
+                                                                field.control
+                                                            ]
+                                                        }
+                                                        name={field.fieldName}
+                                                        render={({
+                                                            field: { onChange },
+                                                        }) => (
+                                                            <FolderSelect
+                                                                control={
+                                                                    handlers[
+                                                                        field
+                                                                            .control
+                                                                    ]
+                                                                }
+                                                                name={
+                                                                    field.fieldName
+                                                                }
+                                                                onChange={
+                                                                    onChange
+                                                                }
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
                                         </Grid>
                                     ))}
                             </>
@@ -174,28 +284,37 @@ const Form = ({ data, handleSubmit, onSubmit, isLoading, register }) => {
             </Box>
             <Box
                 sx={{
-                    width: '100%',
-                    height: '15%',
-                    background: 'pink',
+                    width: '55%',
+                    height: '14%',
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
+                    paddingTop: '0.5%',
                     justifyContent: 'space-around',
                 }}
             >
                 {data.footer &&
                     data.footer.map((field) => (
                         <>
-                            {field.type === 'iconButton' && (
-                                <IconButton
-                                    buttonName={field.name}
-                                    Icon={() => field.icon}
-                                    buttonBackground={field.buttonColor}
-                                    iconColor={field.iconColor}
-                                    handleSubmit={handleSubmit}
-                                    onSubmit={onSubmit}
-                                    isLoading={isLoading}
-                                />
-                            )}
+                            {!field.shouldNotInitDisplay &&
+                                field.type === 'iconButton' && (
+                                    <IconButton
+                                        buttonName={field.name}
+                                        Icon={() => iconSelector(field.icon)}
+                                        buttonBackground={field.buttonColor}
+                                        iconColor={field.iconColor}
+                                        handleSubmit={handlers[field.onClick]}
+                                        onSubmit={handlers[field.onSubmit]}
+                                        isLoading={isLoading}
+                                    />
+                                )}
+                            {!field.shouldNotInitDisplay &&
+                                field.type === 'outlinedButton' && (
+                                    <OutlinedButton
+                                        color={field.color}
+                                        buttonName={field.name}
+                                        onClick={handlers[field.onSubmit]}
+                                    />
+                                )}
                         </>
                     ))}
             </Box>
@@ -233,10 +352,8 @@ Form.propTypes = {
             name: PropTypes.string.isRequired,
         }),
     }).isRequired,
-    handleSubmit: PropTypes.func.isRequired,
+    handlers: PropTypes.objectOf(PropTypes.func),
     isLoading: PropTypes.bool.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-    register: PropTypes.func.isRequired,
 }
 
 export default Form
