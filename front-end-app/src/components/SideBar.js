@@ -1,22 +1,36 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable sort-keys */
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import CustomList from './CustomList'
-import CustomTextField from './textFields/CustomTextField'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 
-const SideBar = ({ data }) => {
-    const [searchText, setSearchText] = useState('')
-
-    const accessSearchText = (event) => {
-        setSearchText(event.target.value)
+const SideBar = ({ data, handleSideBarOpen, setValueWssConnect }) => {
+    const onUrlSelection = (data) => {
+        setValueWssConnect('url', data.url)
     }
 
     return (
         <Box sx={{ width: '100%', height: '100%' }}>
-            {/* <CustomTextField placeholder={'Search'} />
-            <CustomList data={CustomList} /> */}
+            <Box
+                sx={{
+                    width: '100%',
+                    height: '8vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderBottom: '1px solid white',
+                }}
+            >
+                <Typography variant='h5' sx={{ color: 'text.backgroundMatch' }}>
+                    Collections
+                </Typography>
+            </Box>
+            <CustomList
+                data={data}
+                onUrlSelection={onUrlSelection}
+                handleSideBarOpen={handleSideBarOpen}
+            />
         </Box>
     )
 }
@@ -24,9 +38,16 @@ const SideBar = ({ data }) => {
 SideBar.propTypes = {
     data: PropTypes.arrayOf(
         PropTypes.shape({
+            data: PropTypes.arrayOf(
+                PropTypes.shape({
+                    name: PropTypes.string.isRequired,
+                    url: PropTypes.string.isRequired,
+                }),
+            ).isRequired,
             name: PropTypes.string.isRequired,
-            url: PropTypes.number.isRequired,
         }).isRequired,
     ),
+    handleSideBarOpen: PropTypes.func.isRequired,
+    setValueWssConnect: PropTypes.func.isRequired,
 }
 export default SideBar
