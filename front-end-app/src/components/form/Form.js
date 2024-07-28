@@ -67,6 +67,7 @@ const Form = ({ data, isLoading, handlers }) => {
                     display: 'flex',
                     alignItems: 'flex-end',
                     justifyContent: 'center',
+                    marginTop: '10px',
                 }}
             >
                 <Typography variant='h5' sx={{ color: 'text.backgroundMatch' }}>
@@ -353,7 +354,7 @@ Form.propTypes = {
         }),
     }).isRequired,
     handlers: PropTypes.objectOf(PropTypes.func),
-    isLoading: PropTypes.bool.isRequired,
+    isLoading: PropTypes.bool,
 }
 
 export default Form
