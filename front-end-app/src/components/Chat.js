@@ -6,6 +6,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable sort-imports */
 /* eslint-disable sort-keys */
+/* eslint-disable no-negated-condition */
 /* eslint-disable max-lines-per-function */
 import { Box, Stack, Tooltip, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -73,19 +74,28 @@ const Chat = ({
                 msgId: uuid(),
                 isSent: connection !== 'server',
             }
-            let receivedMessage = String.fromCharCode.apply(null, value)
-            if (encryptionData && encryptionData.encryptionKey) {
-                receivedMessage = decryption(receivedMessage, encryptionData)
+            if (!isConsumer) {
+                let receivedMessage = String.fromCharCode.apply(null, value)
+                if (encryptionData && encryptionData.encryptionKey) {
+                    receivedMessage = decryption(
+                        receivedMessage,
+                        encryptionData,
+                    )
+                }
+                message.msg =
+                    typeof receivedMessage === 'object'
+                        ? receivedMessage
+                        : parseJsonSafely(receivedMessage).data
+            } else {
+                message.msg = value
             }
-            message.msg =
-                typeof receivedMessage === 'object'
-                    ? receivedMessage
-                    : parseJsonSafely(receivedMessage).data
             msgData.push(message)
             setChatData(msgData)
         }
         if (!isConsumer && !isProducer) {
             window.ipcRenderer.wssReceivedMsg(onMessageReceived)
+        } else if (isConsumer) {
+            window.ipcRenderer.kafkaReceiveMsg(onMessageReceived)
         }
         if (mssgData === '') {
             setSelectedSchema(false)
@@ -127,9 +137,7 @@ const Chat = ({
         }
         message.msg = sendMsg
         message.timeStamp = Date.now()
-        if (isProducer) {
-            window.ipcRenderer.kafkaSendMsg(message)
-        } else {
+        if (!isProducer) {
             window.ipcRenderer.wssSendMsg(message.msg)
         }
         message.msg =
@@ -140,6 +148,9 @@ const Chat = ({
         setChatData(msgData)
         setIsMssgJsonEditor(false)
         setMssgData('')
+        if (isProducer) {
+            window.ipcRenderer.kafkaSendMsg(message)
+        }
     }
     return (
         <Box

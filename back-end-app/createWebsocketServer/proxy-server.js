@@ -8,11 +8,9 @@ const runProject = (command, projectPath, homeWindow) => {
     })
     child.stdout.on('data', (data) => {
         homeWindow.webContents.send('receiveLogs', data)
-        console.log(`stdout: ${data}`)
     })
     child.stderr.on('data', (data) => {
         homeWindow.webContents.send('receiveLogs', data)
-        console.error(`stderr: ${data}`)
     })
     child.on('close', (code) => {
         console.log(`Child process exited with code ${code}`)

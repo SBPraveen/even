@@ -101,7 +101,6 @@ const WebSocketInitPage = ({
         }
     }
     const onSubmitWssConnect = async (data) => {
-        console.log(data, cookies)
         setIsWssConnectLoading(true)
         setIsServerStarted(true)
         setUrl(data.url)
@@ -401,6 +400,7 @@ const WebSocketInitPage = ({
                         data={sideBarData}
                         handleSideBarOpen={handleSideBarOpen}
                         setValueWssConnect={setValueWssConnect}
+                        setSideBarData={setSideBarData}
                     />
                 </Box>
             </Box>

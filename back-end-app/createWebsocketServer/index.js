@@ -1,9 +1,9 @@
 const { WebSocketServer, WebSocket } = require('ws')
 const { stopProject, runProject } = require('./proxy-server')
 
-let wsMessageConnection, process
-const connections = new Map()
-let connectionId = 0
+let wsMessageConnection, process;
+const connections = new Map();
+let connectionId = 0;
 
 const startServer = (data, homeWindow) => {
     try {
@@ -166,4 +166,4 @@ const stopServer = () => {
     stopProject(process)
 }
 
-module.exports = { startServer, connectServer, sendMessage, stopServer }
+module.exports = { startServer, connectServer, sendMessage, stopServer };
