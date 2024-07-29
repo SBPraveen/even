@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable sort-keys */
 import { Box, Typography } from '@mui/material'
@@ -5,9 +6,22 @@ import CustomList from './CustomList'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 
-const SideBar = ({ data, handleSideBarOpen, setValueWssConnect }) => {
+const SideBar = ({
+    data,
+    handleSideBarOpen,
+    setValueWssConnect,
+    setSideBarData,
+}) => {
+    const [path, setPath] = useState('')
+
     const onUrlSelection = (data) => {
         setValueWssConnect('url', data.url)
+    }
+    const onFolderSelect = async () => {
+        const path = await window.ipcRenderer.fileSystemAccess()
+        setPath(path)
+        const newData = await window.ipcRenderer.importNewSchema()
+        setSideBarData(newData)
     }
 
     return (
@@ -31,6 +45,26 @@ const SideBar = ({ data, handleSideBarOpen, setValueWssConnect }) => {
                 onUrlSelection={onUrlSelection}
                 handleSideBarOpen={handleSideBarOpen}
             />
+            <Box
+                sx={{
+                    alignItems: 'center',
+                    background: 'white',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    height: '5vh',
+                    justifyContent: 'flex-start',
+                    maxHeight: '50px',
+                    minHeight: '30px',
+                    paddingLeft: '1rem',
+                    width: '100%',
+                }}
+                onClick={onFolderSelect}
+            >
+                <Typography sx={{ color: 'text.backgroundMatch' }}>
+                    Import new collections
+                </Typography>
+            </Box>
         </Box>
     )
 }

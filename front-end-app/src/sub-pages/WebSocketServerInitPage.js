@@ -398,6 +398,7 @@ const WebSocketInitPage = ({
                         data={sideBarData}
                         handleSideBarOpen={handleSideBarOpen}
                         setValueWssConnect={setValueWssConnect}
+                        setSideBarData={setSideBarData}
                     />
                 </Box>
             </Box>

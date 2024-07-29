@@ -63,6 +63,9 @@ const createWindow = (mainWindowState) => {
         })
         return result.filePaths
     })
+    ipcMain.handle('importNewSchema', async () => {
+        console.log('importNewSchema')
+    })
     ipcMain.handle('getTitle', async () => {
         return win.getTitle()
     })
