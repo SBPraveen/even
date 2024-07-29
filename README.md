@@ -1,5 +1,5 @@
 # Even
-Even is a desktop based tool that helps developers to build real time and  event-driven architecture.  
+Even is a desktop based tool that helps developers build web-socket servers and  event-driven architectures.  
 
 ## To run the repo  
 - ```install:all``` - Installing all dependencies
@@ -7,11 +7,11 @@ Even is a desktop based tool that helps developers to build real time and  event
   
 ## Features
 
-**Starting a web-socket server locally** - This feature helps decouple the front-end and back-end teams by enabling the front-end team to connect to Even's web-socket server and work independently, without depending on the back-end team.  
+**Starting a web-socket server locally** - This feature helps decouple the front-end and back-end teams by enabling the front-end team to connect to Even's web-socket server if the organization doesn't have one. If they have their own web-socket server, Even will act as a proxy server, allowing developers to send messages to the front-end that are not sent by the server. This is useful when building new features.
 
 **Connecting to a web-socket server** - While Postman offers this feature, it does not support sending cookies (which are crucial for authentication before connecting to the web-socket server) or the encryption/decryption of messages which have been offered in Even.  
 
-**Schema registry** - Users can manually create schemas or have them automatically taken from AsyncAPI docs. This feature allows users to create web-socket test cases and interact with web-socket servers and Kafka seamlessly.  
+**Schema registry** - Users can easily import their messages from AsyncAPI(similar to the OpenAPI Specification) docs. This feature allows users to easily interact with the frontend when using even.
 
 TODO  
 
