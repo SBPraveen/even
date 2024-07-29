@@ -93,8 +93,12 @@ const Chat = ({
     }, [data, isConsumer, isProducer, mssgData])
 
     const onCopyToClipboard = (message) => {
-        setCopyMessageClickedData(message)
-        window.ipcRenderer.copyToClipBoard(message)
+        try {
+            setCopyMessageClickedData(message)
+            window.ipcRenderer.copyToClipBoard(message.msg)
+        } catch (error) {
+            console.log(error.message)
+        }
     }
     const handleMssgJsonEditor = () => {
         setIsMssgJsonEditor(true)
