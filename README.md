@@ -3,7 +3,7 @@ Even is a desktop based tool that helps developers build web-socket servers and 
 
 ## To run the repo  
 - ```install:all``` - Installing all dependencies
-- ```yarn react:build && yarn elctron:start```  - Start the application  
+- ```yarn react:build && yarn electron:start```  - Start the application  
   
 ## Features
 
