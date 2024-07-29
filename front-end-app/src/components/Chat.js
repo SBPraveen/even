@@ -71,7 +71,7 @@ const Chat = ({
                 msg: '',
                 timeStamp: Date.now(),
                 msgId: uuid(),
-                isSent: !(connection === 'server'),
+                isSent: false,
             }
             let receivedMessage = String.fromCharCode.apply(null, value)
             if (encryptionData && encryptionData.encryptionKey) {
@@ -87,7 +87,10 @@ const Chat = ({
         if (!isConsumer && !isProducer) {
             window.ipcRenderer.wssReceivedMsg(onMessageReceived)
         }
-    }, [data, isConsumer, isProducer])
+        if (mssgData === '') {
+            setSelectedSchema(false)
+        }
+    }, [data, isConsumer, isProducer, mssgData])
 
     const onCopyToClipboard = (message) => {
         setCopyMessageClickedData(message)

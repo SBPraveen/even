@@ -110,7 +110,9 @@ const WebSocketInitPage = ({
             encryptionKey: data.enDeKey,
             encryptionAlg: data.enDeAlgorithm,
         })
-        const schemas = await window.ipcRenderer.getSchemaValues('abc')
+        const schemas = await window.ipcRenderer.getSchemaValues(
+            selectedSchemaRepository,
+        )
         setSchemas(schemas.examples ?? [])
         window.ipcRenderer.connectWebSocketServer(serverData)
     }
