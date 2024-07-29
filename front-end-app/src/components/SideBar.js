@@ -15,8 +15,8 @@ const SideBar = ({
         setValueWssConnect('url', data.url)
     }
     const onFolderSelect = async () => {
-        const path = await window.ipcRenderer.fileSystemAccess()
-        const newData = await window.ipcRenderer.importNewSchema()
+        const path = await window.ipcRenderer.fileSystemAccess(true)
+        const newData = await window.ipcRenderer.importNewSchema(path)
         setSideBarData(newData)
     }
 

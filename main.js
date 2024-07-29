@@ -7,10 +7,10 @@ const {
     sendMessage,
     stopServer,
 } = require('./back-end-app/createWebsocketServer/')
-const {
-    kafkaReceiveMsg,
-    producerSendMessage,
-} = require('./back-end-app/kafka-server/')
+// const {
+//     kafkaReceiveMsg,
+//     producerSendMessage,
+// } = require('./back-end-app/kafka-server/')
 const windowStateKeeper = require('electron-window-state')
 const {
     deleteDocument,
@@ -57,14 +57,16 @@ const createWindow = (mainWindowState) => {
 
     ipcMain.on('kafkaConsumerStarter', (event) => kafkaReceiveMsg(win))
     ipcMain.on('copyToClipBoard', (event, data) => clipboard.writeText(data))
-    ipcMain.handle('fileSystemAccess', async () => {
+    ipcMain.handle('fileSystemAccess', async (event, data) => {
         const result = await dialog.showOpenDialog({
-            properties: ['openDirectory'],
+            properties: data ? ['openFile'] : ['openDirectory'],
         })
         return result.filePaths
     })
-    ipcMain.handle('importNewSchema', async () => {
-        console.log('importNewSchema')
+    ipcMain.handle('importNewSchema', async (event, data) => {
+        const key = await processAsyncAPIDocument(data[0])
+        const schemas = await getDocument(key)
+        return schemas ?? false
     })
     ipcMain.handle('getTitle', async () => {
         return win.getTitle()
@@ -75,7 +77,7 @@ const createWindow = (mainWindowState) => {
     })
     ipcMain.handle('getSchemaValues', async (event, key) => {
         const data = await getDocument(key)
-        return data
+        return data ?? false
     })
     ipcMain.handle('getAllDocuments', async (event, ...args) => {
         const data = await getAllDocuments()
@@ -142,9 +144,7 @@ app.whenReady().then(async () => {
         defaultHeight: 1080,
     })
     win = createWindow(mainWindowState)
-    const filePath =
-        '../../../WSS-Repos/wss-v2/async-api-template/asyncapi.json'
-    await processAsyncAPIDocument(filePath)
+
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             win = createWindow(mainWindowState)

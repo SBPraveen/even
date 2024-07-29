@@ -243,7 +243,7 @@ const processAsyncAPIDocument = async (filePath) => {
         return apiName
     } catch (error) {
         console.error('Error processing AsyncAPI document:', error.message)
-        throw error
+        return false
     }
 }
 
