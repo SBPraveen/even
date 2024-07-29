@@ -4,7 +4,6 @@
 import { Box, Typography } from '@mui/material'
 import CustomList from './CustomList'
 import PropTypes from 'prop-types'
-import { useState } from 'react'
 
 const SideBar = ({
     data,
@@ -12,20 +11,17 @@ const SideBar = ({
     setValueWssConnect,
     setSideBarData,
 }) => {
-    const [path, setPath] = useState('')
-
     const onUrlSelection = (data) => {
         setValueWssConnect('url', data.url)
     }
     const onFolderSelect = async () => {
         const path = await window.ipcRenderer.fileSystemAccess()
-        setPath(path)
         const newData = await window.ipcRenderer.importNewSchema()
         setSideBarData(newData)
     }
 
     return (
-        <Box sx={{ width: '100%', height: '100%' }}>
+        <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
             <Box
                 sx={{
                     width: '100%',
@@ -47,21 +43,20 @@ const SideBar = ({
             />
             <Box
                 sx={{
-                    alignItems: 'center',
                     background: 'white',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
+                    position: 'absolute',
+                    bottom: '1.5vh',
+                    right: '1.5vw',
                     display: 'flex',
-                    height: '5vh',
-                    justifyContent: 'flex-start',
-                    maxHeight: '50px',
-                    minHeight: '30px',
-                    paddingLeft: '1rem',
-                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    cursor: 'pointer',
+                    padding: '10px',
+                    borderRadius: '8px',
                 }}
                 onClick={onFolderSelect}
             >
-                <Typography sx={{ color: 'text.backgroundMatch' }}>
+                <Typography sx={{ color: 'primary.main', cursor: 'pointer' }}>
                     Import new collections
                 </Typography>
             </Box>
