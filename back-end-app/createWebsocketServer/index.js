@@ -74,12 +74,12 @@ const startServer = (data, homeWindow) => {
                 backendWs.on('error', (error) => {
                     console.error('Backend connection error: ', error)
                 })
+            } else {
+                ws.on('message', function message(msg) {
+                    console.log('received from client: %s', msg)
+                    homeWindow.webContents.send('wssReceivedMsg', msg, 'browser')
+                })
             }
-            ws.on('message', function message(msg) {
-                console.log('received from client: %s', msg)
-                homeWindow.webContents.send('wssReceivedMsg', msg, 'browser')
-            })
-
             ws.on('close', () => {
                 console.log('Connection closed')
                 if (
