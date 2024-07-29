@@ -64,7 +64,7 @@ const createWindow = (mainWindowState) => {
     })
     ipcMain.handle('getSchemaValues', async (event, key) => {
         const data = await getDocument(key)
-        return data
+        return data ?? false
     })
     ipcMain.handle('getAllDocuments', async (event, ...args) => {
         const data = await getAllDocuments()

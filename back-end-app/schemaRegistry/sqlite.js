@@ -168,7 +168,7 @@ const getDocument = async (apiName) => {
             )
         })
     } catch (error) {
-        throw new Error(`Error getting document: ${error.message}`)
+        return false
     }
 }
 

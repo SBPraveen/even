@@ -71,7 +71,7 @@ const Chat = ({
                 msg: '',
                 timeStamp: Date.now(),
                 msgId: uuid(),
-                isSent: false,
+                isSent: connection !== 'server',
             }
             let receivedMessage = String.fromCharCode.apply(null, value)
             if (encryptionData && encryptionData.encryptionKey) {
