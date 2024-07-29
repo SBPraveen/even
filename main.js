@@ -144,6 +144,7 @@ app.whenReady().then(async () => {
         defaultHeight: 1080,
     })
     win = createWindow(mainWindowState)
+
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             win = createWindow(mainWindowState)
