@@ -1,9 +1,18 @@
+
 # Even
 Even is a desktop based tool that helps developers build web-socket servers and  event-driven architectures.  
 
 ## To run the repo  
-- ```install:all``` - Installing all dependencies
-- ```yarn react:build && yarn electron:start```  - Start the application  
+- ```yarn install:all``` - Installing all dependencies
+- ```yarn react:build && yarn electron:start```  - Start the application
+- NOTE: node js and yarn should be installed  
+
+## Useful Links
+[Trello Board](https://trello.com/b/i6J4c5zB/even)   
+[Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)   
+
+## To the judges of the hackathon
+We made some commits(without Code Review) on the final hours of the hackathon because of which most of our features crashed. We request you to kindly run the main branch in which we didn't ship any new features but solved the bugs. The demo video was reuploaded to youtube after these bug fixes. Thank you :)  
   
 ## Features
 
@@ -19,7 +28,5 @@ TODO
  
 **Starting a Kafka server locally** - Installing Kafka and starting Kafka brokers, producers, and consumers can be tedious due to the lengthy commands required. With our tool, Kafka brokers, producers, and consumers can be started with just a click of a button. Additionally, it simplifies switching between different Kafka versions, and messages are displayed using a JSON viewer for better readability.  
 
-## Useful Links
-[Trello Board](https://trello.com/b/i6J4c5zB/even)   
-[Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)  
+
 
