@@ -1,9 +1,9 @@
 const { WebSocketServer, WebSocket } = require('ws')
 const { stopProject, runProject } = require('./proxy-server')
 
-let wsMessageConnection, process;
-const connections = new Map();
-let connectionId = 0;
+let wsMessageConnection, process
+const connections = new Map()
+let connectionId = 0
 
 const startServer = (data, homeWindow) => {
     try {
@@ -27,7 +27,7 @@ const startServer = (data, homeWindow) => {
                 let backendWs
                 while (
                     !backendWs ||
-                    backendWs.readyState !== WebSocket.CONNECTING
+                    backendWs?.readyState !== WebSocket.CONNECTING
                 ) {
                     backendWs = new WebSocket(
                         `ws://localhost:${data.proxyPort}`,
@@ -41,7 +41,7 @@ const startServer = (data, homeWindow) => {
                 connectionDetails.backendWs = backendWs
 
                 ws.on('message', function message(msg) {
-                    if (backendWs.readyState === WebSocket.OPEN) {
+                    if (backendWs?.readyState === WebSocket.OPEN) {
                         backendWs.send(msg)
                     }
                     homeWindow.webContents.send('wssReceivedMsg', msg)
@@ -52,7 +52,7 @@ const startServer = (data, homeWindow) => {
                 })
 
                 backendWs.on('message', (backendMsg) => {
-                    if (ws.readyState === WebSocket.OPEN) {
+                    if (ws?.readyState === WebSocket.OPEN) {
                         ws.send(backendMsg.toString())
                     }
                     homeWindow.webContents.send(
@@ -64,7 +64,7 @@ const startServer = (data, homeWindow) => {
 
                 backendWs.on('close', () => {
                     console.log('Backend connection closed')
-                    if (ws.readyState === WebSocket.OPEN) {
+                    if (ws?.readyState === WebSocket.OPEN) {
                         ws.close()
                     }
                 })
@@ -75,7 +75,11 @@ const startServer = (data, homeWindow) => {
             } else {
                 ws.on('message', function message(msg) {
                     console.log('received from client: %s', msg)
-                    homeWindow.webContents.send('wssReceivedMsg', msg, 'browser')
+                    homeWindow.webContents.send(
+                        'wssReceivedMsg',
+                        msg,
+                        'browser'
+                    )
                 })
             }
             ws.on('close', () => {
@@ -83,7 +87,7 @@ const startServer = (data, homeWindow) => {
                 if (
                     data.proxyPort &&
                     connectionDetails.backendWs &&
-                    connectionDetails.backendWs.readyState === WebSocket.OPEN
+                    connectionDetails.backendWs?.readyState === WebSocket.OPEN
                 ) {
                     connectionDetails.backendWs.close()
                 }
@@ -135,7 +139,7 @@ const sendMessage = (data) => {
     try {
         if (
             wsMessageConnection &&
-            wsMessageConnection.readyState === WebSocket.OPEN
+            wsMessageConnection?.readyState === WebSocket.OPEN
         ) {
             wsMessageConnection.send(typeof data === 'object' ? data.msg : data)
         }
@@ -146,21 +150,21 @@ const sendMessage = (data) => {
 
 const stopServer = () => {
     for (const [key, connection] of connections) {
-        if (connection.frontendWs.readyState === WebSocket.OPEN) {
+        if (connection.frontendWs?.readyState === WebSocket.OPEN) {
             connection.frontendWs.terminate()
         }
-        if (connection.backendWs.readyState === WebSocket.OPEN) {
+        if (connection.backendWs?.readyState === WebSocket.OPEN) {
             connection.backendWs.close()
         }
     }
     connections.clear()
     if (
         wsMessageConnection &&
-        wsMessageConnection.readyState === WebSocket.OPEN
+        wsMessageConnection?.readyState === WebSocket.OPEN
     ) {
         wsMessageConnection.close()
     }
     stopProject(process)
 }
 
-module.exports = { startServer, connectServer, sendMessage, stopServer };
+module.exports = { startServer, connectServer, sendMessage, stopServer }

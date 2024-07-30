@@ -72,7 +72,7 @@ const Chat = ({
                 msg: '',
                 timeStamp: Date.now(),
                 msgId: uuid(),
-                isSent: connection !== 'server',
+                isSent: false,
             }
             if (!isConsumer) {
                 let receivedMessage = String.fromCharCode.apply(null, value)
@@ -475,8 +475,8 @@ const Chat = ({
                             >
                                 <textarea
                                     value={
-                                        selectedSchema
-                                            ? JSON.stringify(mssgData)
+                                        typeof mssgData === 'object'
+                                            ? JSON.stringify(mssgData, null, 2)
                                             : mssgData
                                     }
                                     onChange={(e) =>
