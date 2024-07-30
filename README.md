@@ -12,7 +12,7 @@ Even is a desktop based tool that helps developers build web-socket servers and 
 [Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)   
 
 ## To the judges of the hackathon
-We made some commits(without Code Review) on the final hours of the hackathon because of which most of our features crashed. We request you to kindly run the main branch in which we didn't ship any new features but solved the bugs. The demo video was reuploaded to youtube after these bug fixes. Thank you :)  
+We made some commits(without Code Review) on the final hours of the hackathon because of which most of our features crashed at the end of the hackathon. We request you to kindly run the main branch in which we didn't ship any new features but solved the bugs. The demo video was reuploaded to youtube after these bug fixes. Thank you :)  
   
 ## Features
 
