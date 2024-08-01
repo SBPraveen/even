@@ -1,4 +1,5 @@
-
+ ![Group 280 (1)](https://github.com/user-attachments/assets/4ed0c64e-f62b-4007-94d6-a3424d83da36)
+ 
 # Even
 Even is a desktop based tool that helps developers build web-socket servers and  event-driven architectures.  
 
@@ -8,7 +9,8 @@ Even is a desktop based tool that helps developers build web-socket servers and 
 - NOTE: node js and yarn should be installed  
 
 ## Useful Links
-[Trello Board](https://trello.com/b/i6J4c5zB/even)   
+[Trello Board](https://trello.com/b/i6J4c5zB/even)  
+
 [Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)   
 
 ## To the judges of the hackathon
