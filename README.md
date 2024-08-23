@@ -23,3 +23,5 @@ TODO
 [Trello Board](https://trello.com/b/i6J4c5zB/even)   
 [Figma](https://www.figma.com/design/5LBrVUPwEm1FduKn8iqoEf/Untitled?node-id=0-1&t=j4sfY7di62836dZ0-1)  
 
+## License
+This project is licensed under the MIT License
